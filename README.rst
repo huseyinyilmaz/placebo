@@ -56,3 +56,7 @@ To test request data, I will need to catch requests and provide some kind interf
 Debug mode:
 -----------
 This abstraction is good. But when urls needs to be updated it becomes really hard to debug those kind of interfaces. So there should be a debug mod that prints out all decision to console.
+
+Regexp URL's
+------------
+There should be a way to define urls with some kind of regexp. For some cases, we might want to be able to mock whole sub directories.
