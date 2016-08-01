@@ -1,7 +1,7 @@
 Placebo
 =======
 
-Placebo is a utility that help mocks api responses in a reusable way.
+Placebo is a utility that help implenting mock api responses in a reusable and composable way.
 
 (WORK IN PROGRESS)
 

@@ -51,7 +51,11 @@ class Placebo(object):
 
     @classmethod
     def mock(cls, f):
+        # create a placebo instance for backend
         placebo = cls()
+        # choose a backend
         backend = cls.get_backend()
+        # ask backend for decorator for current placebo instance.
         decorator = backend(placebo)
+        # wrap decorator around curent function.
         return wraps(f)(decorator(f))
