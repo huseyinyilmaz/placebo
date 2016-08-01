@@ -1,6 +1,7 @@
 from unittest import TestCase
 from api import get_movie
 from testdata import GetMovieValidResponse
+from testdata import GetMovieValidResponseHttPretty
 
 
 class omdbapiTests(TestCase):
@@ -30,6 +31,12 @@ class omdbapiTests(TestCase):
 
     @GetMovieValidResponse.mock
     def test_get_movie(self):
+        movie = get_movie('matrix', 1999)
+        expected_movie = self.resp
+        self.assertEqual(movie, expected_movie)
+
+    @GetMovieValidResponseHttPretty.mock
+    def test_get_movie_with_httpretty(self):
         movie = get_movie('matrix', 1999)
         expected_movie = self.resp
         self.assertEqual(movie, expected_movie)

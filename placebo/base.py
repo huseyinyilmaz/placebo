@@ -33,6 +33,9 @@ class Placebo(object):
         else:
             return urlparse.urlparse(self.url)
 
+    def get_method(self):
+        return self.method.upper()
+
     @classmethod
     def get_backend(cls):
         """If backend is provided on child,
