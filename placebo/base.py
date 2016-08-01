@@ -17,7 +17,8 @@ class Placebo(object):
 
     backend = None
 
-    def get_body(self, url, request):
+    def get_body(self, url, headers, body):
+        print('URL=%s, headers=%s, body=%s' % (url, headers, body))
         if self.body is NotImplemented:
             raise NotImplementedError('To use placebo, you need to either '
                                       'provide body attribute or '

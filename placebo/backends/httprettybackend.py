@@ -1,3 +1,5 @@
+import urlparse
+
 import httpretty
 
 
@@ -9,9 +11,11 @@ def get_decorator(placebo):
                 method = placebo.get_method()
 
                 def get_body(request, uri, headers):
-                    return placebo.status, {}, placebo.get_body(uri, request)
+                    url = urlparse.urlparse(uri)
+                    return placebo.status, {}, placebo.get_body(url,
+                                                                headers,
+                                                                request.body)
                     # return response.status, response.headers, response.data
-
                 httpretty.register_uri(getattr(httpretty, method),
                                        placebo.get_url().geturl(),
                                        body=get_body,
