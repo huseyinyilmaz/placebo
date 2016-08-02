@@ -20,6 +20,7 @@ def get_decorator(placebo):
         headers = request.headers
         placebo._last_request = request
         return {'status': placebo.status,
-                'content': placebo.get_body(url, headers, body)}
+                'content': placebo.get_body(url, headers, body),
+                'headers': placebo.get_headers(url, headers, body)}
 
     return httmock.with_httmock(mock_response)

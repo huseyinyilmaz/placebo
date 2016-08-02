@@ -12,14 +12,19 @@ def get_decorator(placebo):
 
                 def get_body(request, uri, headers):
                     url = urlparse.urlparse(uri)
-                    return placebo.status, {}, placebo.get_body(url,
-                                                                headers,
-                                                                request.body)
+                    response_headers = placebo.get_headers(url,
+                                                           headers,
+                                                           request.body)
+                    response_body = placebo.get_body(url,
+                                                     headers,
+                                                     request.body)
+                    return (placebo.status, response_headers, response_body)
                     # return response.status, response.headers, response.data
                 httpretty.register_uri(getattr(httpretty, method),
                                        placebo.get_url().geturl(),
-                                       body=get_body,
-                                       status=placebo.status)
+                                       body=get_body)
+                # status=placebo.status,)
+
                 response = fun(*args, **kwargs)
                 return response
 

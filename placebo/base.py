@@ -10,6 +10,7 @@ class Placebo(object):
     # Url that will be mocked
     url = NotImplemented
     body = NotImplemented
+    headers = NotImplemented
     # Http method can be ('POST', 'GET', 'PUT', 'DELETE' etc.) default is 'GET'
     method = 'GET'
     # Http status code for response default is 200
@@ -25,6 +26,12 @@ class Placebo(object):
                                       'overwrite get_body method in subclass.')
         else:
             return self.body
+
+    def get_headers(self, url, headers, body):
+        headers = self.headers
+        if headers is NotImplemented:
+            headers = {}
+        return headers
 
     def get_url(self):
         if self.body is NotImplemented:
