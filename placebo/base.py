@@ -5,7 +5,7 @@ import urlparse
 import six
 
 from placebo import backends
-from placebo.utils.datautils import extract_function
+from placebo.utils.datautils import invoke_or_get
 
 
 class PlaceboData(object):
@@ -42,8 +42,9 @@ class PlaceboData(object):
         # class as decorator. In that case we want to show an informative
         # error.
         if f is not None:
-            raise ValueError('Placebo object is not a decorator itself. '
-                             'Please use @Placebo.decorate instead of @Placebo')
+            raise ValueError(
+                'Placebo object is not a decorator itself. '
+                'Please use @Placebo.decorate instead of @Placebo')
         if url is not None:
             self.url = url
         if body is not None:
@@ -63,13 +64,13 @@ class PlaceboData(object):
                                       'provide body attribute or '
                                       'overwrite get_body method in subclass.')
         else:
-            return extract_function(self.body, url, headers, body)
+            return invoke_or_get(self.body, url, headers, body)
 
     def _get_headers(self, url, headers, body):
         headers = self.headers
         if headers is NotImplemented:
             headers = {}
-        return extract_function(headers, url, headers, body)
+        return invoke_or_get(headers, url, headers, body)
 
     def _get_url(self):
         if self.url is NotImplemented:
@@ -77,14 +78,14 @@ class PlaceboData(object):
                                       'provide url attribute or '
                                       'overwrite get_url method in subclass.')
         else:
-            url = extract_function(self.url)
+            url = invoke_or_get(self.url)
             # if url is a string convert it to ParsedUrl
             if isinstance(url, six.string_types):
                 url = urlparse.urlparse(url)
             return url
 
     def _get_method(self):
-        method = extract_function(self.method)
+        method = invoke_or_get(self.method)
         if not isinstance(method, six.string_types):
             raise ValueError('Method must be a string value.'
                              'Instead type %s provided. (%s)' %
@@ -92,7 +93,7 @@ class PlaceboData(object):
         return method.upper()
 
     def _get_status(self):
-        return extract_function(self.status)
+        return invoke_or_get(self.status)
 
     @classmethod
     def get_backend(cls):
@@ -103,6 +104,8 @@ class PlaceboData(object):
         if cls.backend is None:
             backend = backends.get_backend()
         else:
+            # we cannot use invoke_or_get for
+            # backend because backend is basicaly a function.
             backend = cls.backend
         return backend
 
