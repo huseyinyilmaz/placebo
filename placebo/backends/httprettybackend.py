@@ -23,8 +23,6 @@ def get_decorator(placebo):
                 httpretty.register_uri(getattr(httpretty, method),
                                        placebo._get_url().geturl(),
                                        body=get_body)
-                # status=placebo.status,)
-
                 response = fun(*args, **kwargs)
                 return response
 
