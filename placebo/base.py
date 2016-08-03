@@ -96,13 +96,18 @@ class PlaceboData(object):
         return invoke_or_get(self.status)
 
     @classmethod
+    def _resolve_backend(cls):
+        """Dependency injection hook."""
+        return backends.get_backend()
+
+    @classmethod
     def get_backend(cls):
         """If backend is provided on child,
         use that backend. if it is not provided,
         go over all backends to find one that can be used.
         """
         if cls.backend is None:
-            backend = backends.get_backend()
+            backend = cls._resolve_backend()
         else:
             # we cannot use invoke_or_get for
             # backend because backend is basicaly a function.
