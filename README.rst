@@ -21,16 +21,16 @@ And usage of the mock will be like this:
 
 ::
 
-   @Response.mock
+   @Response.decorate
    def users_api_test(self):
        ...
 
 
-It will also work on views
+You can decorate any function or method with this decorator. Even django views:
 
 ::
 
-   @Response.mock
+   @Response.decorate
    def users_list_view(request):
        ...
 
