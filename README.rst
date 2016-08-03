@@ -9,13 +9,9 @@ Sample mock:
 ::
 
    class UsersResponse(BaseMock):
-
        url = 'http://www.acme.com/api/v1/users/'
        body = json.dumps([{'name': 'Huseyin',
                            'last_name': 'Yilmaz'}])
-
-       method = 'GET'
-
 
 And usage of the mock will be like this:
 
