@@ -4,6 +4,13 @@ import unittest
 import requests
 from tests import utils
 
+try:
+    # python3.X
+    from urllib import parse
+except ImportError:
+    # python 2.X
+    import urlparse as parse
+
 
 class GetMock(utils.BasePlacebo):
     # Test related data. Not part of the interface.
@@ -116,3 +123,32 @@ class StringValuesTestCase(unittest.TestCase):
         self.assertEqual(response2.json(), GetMock.item2)
         if not utils.is_httpretty:
             self.assertEqual(response2.headers, GetMock.headers2)
+
+
+# There is still some tests to be done to make regexes compatible with
+# both backends.
+
+class RegexMock(utils.BasePlacebo):
+    item = {'name': 'Huseyin', 'last_name': 'Yilmaz'}
+
+    # Data for placebo interface
+    def url(self):
+        return parse.ParseResult(
+            scheme='http',
+            netloc='www.example.com',
+            path='',
+            params='',
+            query='',
+            fragment='')
+    body = json.dumps(item)
+    headers = {'custom-header': 'OK',
+               'custom-header2': 'Second header'}
+
+
+@unittest.skipTest
+class RegexTestCase(unittest.TestCase):
+    @RegexMock.decorate
+    def test_all_regex(self):
+        response = requests.get('http://www.example.com/test')
+        print(response.json())
+        print(response)

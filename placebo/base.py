@@ -65,6 +65,10 @@ class PlaceboData(object):
             self.backend = backend
 
     def _get_body(self, url, headers, body):
+        # we want to keep latest request to use do tests
+        self.latest_request = {'url': url,
+                               'headers': headers,
+                               'body': body}
         if self.body is NotImplemented:
             raise NotImplementedError('To use placebo, you need to either '
                                       'provide body attribute or '

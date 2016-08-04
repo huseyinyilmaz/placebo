@@ -57,5 +57,9 @@ Regexp URL's
 ------------
 There should be a way to define urls with some kind of regexp. For some cases, we might want to be able to mock whole sub directories.
 
+https://github.com/gabrielfalcao/HTTPretty/blob/a77921aaa2d0a249ac20a789f03c869e4f5ed22e/tests/functional/test_httplib2.py#L299
+
+https://github.com/patrys/httmock/blob/master/tests.py#L161
+
 .. |build| image:: https://travis-ci.org/huseyinyilmaz/placebo.svg?branch=master
 .. _build: https://travis-ci.org/huseyinyilmaz/placebo

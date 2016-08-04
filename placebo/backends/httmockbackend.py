@@ -10,12 +10,16 @@ import httmock
 
 def get_decorator(placebo):
     url = placebo._get_url()
-
-    @httmock.urlmatch(scheme=url.scheme,
-                      netloc=url.netloc,
-                      path=url.path,
-                      method=placebo._get_method(),
-                      query=url.query)
+    match_kwargs = {
+        'scheme': url.scheme,
+        'netloc': url.netloc,
+        'path': url.path,
+        'method': placebo._get_method(),
+        'query': url.query
+    }
+    # remove None values
+    # match_kwargs = {k: v for k, v in match_kwargs.items() if v is not None}
+    @httmock.urlmatch(**match_kwargs)
     def mock_response(url, request):
         # Convert parse result type from SplitResult to ParseResult
         url = parse.urlparse(url.geturl())
