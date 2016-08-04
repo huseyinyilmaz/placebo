@@ -1,5 +1,5 @@
-Placebo
-=======
+Placebo |build|_
+================
 
 Placebo is a utility that help implenting mock api responses in a reusable and composable way.
 
@@ -56,3 +56,6 @@ This abstraction is good. But when urls needs to be updated it becomes really ha
 Regexp URL's
 ------------
 There should be a way to define urls with some kind of regexp. For some cases, we might want to be able to mock whole sub directories.
+
+.. |build| image:: https://travis-ci.org/huseyinyilmaz/placebo.svg?branch=master
+.. _build: https://travis-ci.org/huseyinyilmaz/placebo
