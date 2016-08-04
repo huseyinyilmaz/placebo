@@ -1,5 +1,10 @@
 import logging
-import urlparse
+try:
+    # python3.X
+    from urllib import parse
+except ImportError:
+    # python 2.X
+    import urlparse as parse
 
 import httpretty
 
@@ -20,7 +25,7 @@ def get_decorator(placebo):
                 method = placebo._get_method()
 
                 def get_body(request, uri, headers):
-                    url = urlparse.urlparse(uri)
+                    url = parse.urlparse(uri)
                     response_headers = placebo._get_headers(url,
                                                             headers,
                                                             request.body)
