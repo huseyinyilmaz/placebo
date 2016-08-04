@@ -62,6 +62,7 @@ instance/
 
 # Sphinx documentation
 docs/_build/
+doc/_build/
 
 # PyBuilder
 target/
@@ -84,6 +85,9 @@ ENV/
 
 # Spyder project settings
 .spyderproject
+
+# Mac files
+.DS_Store
 
 # Rope project settings
 .ropeproject
