@@ -22,47 +22,56 @@ class GetMock(utils.BasePlacebo):
 
 class StringValuesTestCase(unittest.TestCase):
 
+    def assertHeadersEqual(self, heads_a, heads_b):
+        """Since httpretty is a socket level library. Other libraries
+        before the socket adds common headers. So we are removing them"""
+        if utils.is_httpretty:
+            heads_a = utils.remove_common_headers(heads_a)
+            heads_b = utils.remove_common_headers(heads_b)
+
+        self.assertEqual(heads_a, heads_b)
+
     @GetMock.decorate
     def test_base_call(self):
         response = requests.get(GetMock.url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), GetMock.item)
-        self.assertEqual(response.headers, GetMock.headers)
+        self.assertHeadersEqual(response.headers, GetMock.headers)
 
     @GetMock.decorate(status=500)
     def test_update_status(self):
         response = requests.get(GetMock.url)
         self.assertEqual(response.status_code, 500)
         self.assertEqual(response.json(), GetMock.item)
-        self.assertEqual(response.headers, GetMock.headers)
+        self.assertHeadersEqual(response.headers, GetMock.headers)
 
     @GetMock.decorate(method='POST')
     def test_update_method(self):
         response = requests.post(GetMock.url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), GetMock.item)
-        self.assertEqual(response.headers, GetMock.headers)
+        self.assertHeadersEqual(response.headers, GetMock.headers)
 
     @GetMock.decorate(url=GetMock.url2)
     def test_update_url(self):
         response = requests.get(GetMock.url2)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), GetMock.item)
-        self.assertEqual(response.headers, GetMock.headers)
+        self.assertHeadersEqual(response.headers, GetMock.headers)
 
     @GetMock.decorate(headers=GetMock.headers2)
     def test_update_headers(self):
         response = requests.get(GetMock.url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), GetMock.item)
-        self.assertEqual(response.headers, GetMock.headers2)
+        self.assertHeadersEqual(response.headers, GetMock.headers2)
 
     @GetMock.decorate(body=json.dumps(GetMock.item2))
     def test_update_body(self):
         response = requests.get(GetMock.url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), GetMock.item2)
-        self.assertEqual(response.headers, GetMock.headers)
+        self.assertHeadersEqual(response.headers, GetMock.headers)
 
     @GetMock.decorate
     @GetMock.decorate(url=GetMock.url2,
@@ -75,7 +84,7 @@ class StringValuesTestCase(unittest.TestCase):
         response = requests.get(GetMock.url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), GetMock.item)
-        self.assertEqual(response.headers, GetMock.headers)
+        self.assertHeadersEqual(response.headers, GetMock.headers)
         # test second decorator data
         response2 = requests.post(GetMock.url2)
         self.assertEqual(response2.status_code, 500)
@@ -93,7 +102,7 @@ class StringValuesTestCase(unittest.TestCase):
         response = requests.get(GetMock.url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), GetMock.item)
-        self.assertEqual(response.headers, GetMock.headers)
+        self.assertHeadersEqual(response.headers, GetMock.headers)
         # test second decorator data
         response2 = requests.post(GetMock.url)
         self.assertEqual(response2.status_code, 500)

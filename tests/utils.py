@@ -14,3 +14,11 @@ backend = import_string(backend_str)
 
 class BasePlacebo(Placebo):
     backend = backend
+
+
+def remove_common_headers(headers):
+    common_headers = ['content-type', 'content-length']
+    for header in common_headers:
+        if header in headers:
+            del headers[header]
+    return headers
