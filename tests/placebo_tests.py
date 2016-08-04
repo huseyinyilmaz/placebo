@@ -23,8 +23,12 @@ class GetMock(utils.BasePlacebo):
 class StringValuesTestCase(unittest.TestCase):
 
     def assertHeadersEqual(self, heads_a, heads_b):
-        """Since httpretty is a socket level library. Other libraries
-        before the socket adds common headers. So we are removing them"""
+        """Do not test for common headers for httpretty.
+
+        Since httpretty is a socket level library, other libraries
+        before the socket adds common headers. So we are removing
+        common headers for httpretty.
+        """
         if utils.is_httpretty:
             heads_a = utils.remove_common_headers(heads_a)
             heads_b = utils.remove_common_headers(heads_b)
@@ -84,12 +88,14 @@ class StringValuesTestCase(unittest.TestCase):
         response = requests.get(GetMock.url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), GetMock.item)
-        self.assertHeadersEqual(response.headers, GetMock.headers)
+        if not utils.is_httpretty:
+            self.assertHeadersEqual(response.headers, GetMock.headers)
         # test second decorator data
         response2 = requests.post(GetMock.url2)
         self.assertEqual(response2.status_code, 500)
         self.assertEqual(response2.json(), GetMock.item2)
-        self.assertEqual(response2.headers, GetMock.headers2)
+        if not utils.is_httpretty:
+            self.assertEqual(response2.headers, GetMock.headers2)
 
     @GetMock.decorate
     @GetMock.decorate(url=GetMock.url,
@@ -102,9 +108,11 @@ class StringValuesTestCase(unittest.TestCase):
         response = requests.get(GetMock.url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), GetMock.item)
-        self.assertHeadersEqual(response.headers, GetMock.headers)
+        if not utils.is_httpretty:
+            self.assertHeadersEqual(response.headers, GetMock.headers)
         # test second decorator data
         response2 = requests.post(GetMock.url)
         self.assertEqual(response2.status_code, 500)
         self.assertEqual(response2.json(), GetMock.item2)
-        self.assertEqual(response2.headers, GetMock.headers2)
+        if not utils.is_httpretty:
+            self.assertEqual(response2.headers, GetMock.headers2)
