@@ -19,6 +19,7 @@ setup(
     zip_safe=False,
     test_suite='tests',
     tests_require=[
+        'six',
         'requests',
         'httmock',
         'httpretty',

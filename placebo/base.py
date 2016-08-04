@@ -1,6 +1,12 @@
 from functools import partial
 from functools import wraps
-import urlparse
+
+try:
+    # python3.X
+    from urllib import parse
+except ImportError:
+    # python 2.X
+    import urlparse as parse
 
 import six
 
@@ -81,7 +87,7 @@ class PlaceboData(object):
             url = invoke_or_get(self.url)
             # if url is a string convert it to ParsedUrl
             if isinstance(url, six.string_types):
-                url = urlparse.urlparse(url)
+                url = parse.urlparse(url)
             return url
 
     def _get_method(self):

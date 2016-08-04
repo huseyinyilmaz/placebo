@@ -1,4 +1,9 @@
-import urlparse
+try:
+    # python3.X
+    from urllib import parse
+except ImportError:
+    # python 2.X
+    import urlparse as parse
 
 import httmock
 
@@ -13,7 +18,7 @@ def get_decorator(placebo):
                       query=url.query)
     def mock_response(url, request):
         # Convert parse result type from SplitResult to ParseResult
-        url = urlparse.urlparse(url.geturl())
+        url = parse.urlparse(url.geturl())
         # if body is empty httmock returns None
         # but we want ot to be always string.
         body = request.body or ''

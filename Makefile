@@ -5,3 +5,6 @@ test-httpretty:
 
 test-httmock:
 	PLACEBO_BACKEND=placebo.backends.httmockbackend.get_decorator python setup.py test
+
+virtualenv3:
+	mkvirtualenv placebo3 --python=`which python3`
