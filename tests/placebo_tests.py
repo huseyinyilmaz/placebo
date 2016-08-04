@@ -1,26 +1,26 @@
-"""Generic tests for all backends."""
-
+"""Tests for main placebo interface and functionality."""
 import json
 import unittest
 import requests
-from placebo import Placebo
+from tests import utils
 
 
-class GetMock(Placebo):
-    # Test related data that will be used in tests.
+class GetMock(utils.BasePlacebo):
+    # Test related data. Not part of the interface.
     item = {'name': 'Huseyin', 'last_name': 'Yilmaz'}
     item2 = {'name': 'Mert', 'last_name': 'Yilmaz'}
     url2 = 'http://www.example2.com/api/item'
-    headers2 = {'content-type': 'application/json',
-                'custom-header': 'headers2'}
+    headers2 = {'custom-header': 'headers2',
+                'another-header': 'some data'}
+
     # Data for placebo interface
     url = 'http://www.example.com/api/item'
     body = json.dumps(item)
-    headers = {'content-type': 'application/json',
-               'custom-header': 'OK'}
+    headers = {'custom-header': 'OK',
+               'custom-header2': 'Second header'}
 
 
-class BaseTestCase(unittest.TestCase):
+class StringValuesTestCase(unittest.TestCase):
 
     @GetMock.decorate
     def test_base_call(self):

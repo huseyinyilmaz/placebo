@@ -112,7 +112,6 @@ class PlaceboData(object):
             # we cannot use invoke_or_get for
             # backend because backend is basicaly a function.
             backend = cls.backend
-        print('backend=%s'% backend)
         return backend
 
 

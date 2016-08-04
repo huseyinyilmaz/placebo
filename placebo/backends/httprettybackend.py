@@ -1,6 +1,15 @@
+import logging
 import urlparse
 
 import httpretty
+
+logger = logging.getLogger(__name__)
+
+HEADER_WARNING = ('Placebo warning: Please beware that httppretty has known '
+                  'problems when you use multiple Placebo mocks that updates '
+                  'headers. If you have any problems with mixing headers, '
+                  'please consider chaning your backend to httmockbackend or '
+                  'do not stack such Placebo mocks on top of each other.')
 
 
 def get_decorator(placebo):
@@ -15,6 +24,9 @@ def get_decorator(placebo):
                     response_headers = placebo._get_headers(url,
                                                             headers,
                                                             request.body)
+                    if response_headers:
+                        logger.warn(HEADER_WARNING)
+
                     response_body = placebo._get_body(url,
                                                       headers,
                                                       request.body)
@@ -27,7 +39,7 @@ def get_decorator(placebo):
                 return response
 
             # run-time check if httppretty is enabled.
-            # We need to enable httpretty only once.
+            # We must enable httpretty only once.
             # This is necessary to chain
             # multiple mock objects together.
             if not httpretty.is_enabled():

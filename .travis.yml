@@ -1,0 +1,17 @@
+sudo: false
+language: python
+python:
+  - "2.7"
+  - "3.2"
+  - "3.3"
+  - "3.4"
+  - "3.5"
+  - "nightly"
+
+env:
+  matrix:
+    - PLACEBO_BACKEND=placebo.backends.httprettybackend.get_decorator
+    - PLACEBO_BACKEND=placebo.backends.httmockbackend.get_decorator
+
+script:
+  - python setup.py test
