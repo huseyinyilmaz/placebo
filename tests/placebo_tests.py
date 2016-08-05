@@ -190,16 +190,27 @@ class HttprettyRegexMock(utils.BasePlacebo):
                      "Httpretty specific regex tests")
 class HttprettyRegexTestCase(unittest.TestCase):
     """Httpretty specific tests"""
-    @HttprettyCatchAllMock.decorate
+    # Because of how httpretty works order of decorators
+    # Does not decide the priority. So if multiple decorators
+    # match with with current url, one decorator will be choosen
+    # randomly and used in response. For that reason we cannot
+    # use HttprettyCatchAllMock. Instead we will match all urls
+    # used in test separately. That way we will not have a url
+    # that matches multiple mocks.
+    # @HttprettyCatchAllMock.decorate
+    @HttprettyCatchAllMock.decorate(url='http://www.example.com/test')
+    @HttprettyCatchAllMock.decorate(url='http://www.example.com')
+    @HttprettyCatchAllMock.decorate(url='http://www.example.com/items/alpha/')
     @HttprettyRegexMock.decorate
     def test_regex_url(self):
+        # Urls that does not match with regex
         response = requests.get('http://www.example.com/test')
         self.assertEqual(response.json(), HttprettyCatchAllMock.item)
         response = requests.get('http://www.example.com')
         self.assertEqual(response.json(), HttprettyCatchAllMock.item)
         response = requests.get('http://www.example.com/items/alpha/')
         self.assertEqual(response.json(), HttprettyCatchAllMock.item)
-
+        # Urls that matches regex
         response = requests.get('http://www.example.com/items/1/')
         self.assertEqual(response.json(), HttprettyRegexMock.item)
         response = requests.get('https://www.example.com/items/2/')
