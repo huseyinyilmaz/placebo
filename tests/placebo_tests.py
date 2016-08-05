@@ -181,7 +181,7 @@ class HttprettyCatchAllMock(utils.BasePlacebo):
 
 class HttprettyRegexMock(utils.BasePlacebo):
     item = {'name': 'Huseyin', 'last_name': 'Yilmaz'}
-    url = (re.compile('http://www.example.com/items/(?P<item_id>\d+)/')
+    url = (re.compile('^http(s)?://www.example.com/items/\d+/$')
            if utils.is_httpretty else '')
     body = json.dumps(item)
 
@@ -191,7 +191,7 @@ class HttprettyRegexMock(utils.BasePlacebo):
 class HttprettyRegexTestCase(unittest.TestCase):
 
     @HttprettyCatchAllMock.decorate
-    # @HttprettyRegexMock.decorate
+    @HttprettyRegexMock.decorate
     def test_all_regex(self):
         response = requests.get('http://www.example.com/test')
         self.assertEqual(response.json(), HttprettyCatchAllMock.item)
@@ -200,7 +200,7 @@ class HttprettyRegexTestCase(unittest.TestCase):
         response = requests.get('http://www.example.com/items/alpha/')
         self.assertEqual(response.json(), HttprettyCatchAllMock.item)
 
-        # response = requests.get('http://www.example.com/items/1/')
-        # self.assertEqual(response.json(), HttprettyRegexMock.item)
-        # response = requests.get('https://www.example.com/items/2/')
-        # self.assertEqual(response.json(), HttprettyRegexMock.item)
+        response = requests.get('http://www.example.com/items/1/')
+        self.assertEqual(response.json(), HttprettyRegexMock.item)
+        response = requests.get('https://www.example.com/items/2/')
+        self.assertEqual(response.json(), HttprettyRegexMock.item)
