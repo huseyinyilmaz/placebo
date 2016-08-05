@@ -151,11 +151,11 @@ class HttmockRegexMock(utils.BasePlacebo):
 
 @unittest.skipUnless(utils.is_httmock,
                      "Httmock specific regex tests")
-class HttMockRegexTestCase(unittest.TestCase):
-
+class HttmockTestCase(unittest.TestCase):
+    """Httmock specific tests."""
     @HttmockCatchAllMock.decorate
     @HttmockRegexMock.decorate
-    def test_all_regex(self):
+    def test_regex_url(self):
         response = requests.get('http://www.example.com/test')
         self.assertEqual(response.json(), HttmockCatchAllMock.item)
         response = requests.get('http://www.example.com')
@@ -189,7 +189,7 @@ class HttprettyRegexMock(utils.BasePlacebo):
 @unittest.skipUnless(utils.is_httpretty,
                      "Httpretty specific regex tests")
 class HttprettyRegexTestCase(unittest.TestCase):
-
+    """Httpretty specific tests"""
     @HttprettyCatchAllMock.decorate
     @HttprettyRegexMock.decorate
     def test_regex_url(self):
