@@ -4,12 +4,7 @@ import unittest
 import requests
 from tests import utils
 
-try:
-    # python3.X
-    from urllib import parse
-except ImportError:
-    # python 2.X
-    import urlparse as parse
+from six.moves.urllib import parse
 
 
 class GetMock(utils.BasePlacebo):
@@ -145,10 +140,10 @@ class RegexMock(utils.BasePlacebo):
                'custom-header2': 'Second header'}
 
 
-@unittest.skipTest
-class RegexTestCase(unittest.TestCase):
-    @RegexMock.decorate
-    def test_all_regex(self):
-        response = requests.get('http://www.example.com/test')
-        print(response.json())
-        print(response)
+# @unittest.skipTest
+# class RegexTestCase(unittest.TestCase):
+#     @RegexMock.decorate
+#     def test_all_regex(self):
+#         response = requests.get('http://www.example.com/test')
+#         print(response.json())
+#         print(response)

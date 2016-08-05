@@ -1,9 +1,4 @@
-try:
-    # python3.X
-    from urllib import parse
-except ImportError:
-    # python 2.X
-    import urlparse as parse
+from six.moves.urllib import parse
 
 import httmock
 
@@ -19,6 +14,7 @@ def get_decorator(placebo):
     }
     # remove None values
     # match_kwargs = {k: v for k, v in match_kwargs.items() if v is not None}
+
     @httmock.urlmatch(**match_kwargs)
     def mock_response(url, request):
         # Convert parse result type from SplitResult to ParseResult

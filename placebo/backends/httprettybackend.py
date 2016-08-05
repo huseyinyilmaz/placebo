@@ -1,10 +1,5 @@
 import logging
-try:
-    # python3.X
-    from urllib import parse
-except ImportError:
-    # python 2.X
-    import urlparse as parse
+from six.moves.urllib import parse
 
 import httpretty
 

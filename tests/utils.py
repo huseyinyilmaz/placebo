@@ -1,6 +1,7 @@
 import os
 from placebo import Placebo
 from placebo.utils.importutils import import_string
+
 httpretty_path = 'placebo.backends.httprettybackend.get_decorator'
 httmock_path = 'placebo.backends.httmockbackend.get_decorator'
 # Get value from environment.

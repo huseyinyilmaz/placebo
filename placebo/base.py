@@ -1,14 +1,8 @@
 from functools import partial
 from functools import wraps
-
-try:
-    # python3.X
-    from urllib import parse
-except ImportError:
-    # python 2.X
-    import urlparse as parse
-
 import six
+
+from six.moves.urllib import parse
 
 from placebo import backends
 from placebo.utils.datautils import invoke_or_get
@@ -83,6 +77,13 @@ class PlaceboData(object):
         return invoke_or_get(headers, url, headers, body)
 
     def _get_url(self):
+        """
+        Returns: string_type or parse.ParseResult or parse SplitResult
+        We have a vague return type for _get_url method
+        because we could not generalise regex support for all
+        backends. So we are directly passing result to backends.
+        That way users can use regex that their backend provides.
+        """
         if self.url is NotImplemented:
             raise NotImplementedError('To use placebo, you need to either '
                                       'provide url attribute or '
@@ -90,8 +91,9 @@ class PlaceboData(object):
         else:
             url = invoke_or_get(self.url)
             # if url is a string convert it to ParsedUrl
-            if isinstance(url, six.string_types):
-                url = parse.urlparse(url)
+            # if isinstance(url, six.string_types):
+            #     url = parse.urlparse(url)
+            # TODO: check return type
             return url
 
     def _get_method(self):
