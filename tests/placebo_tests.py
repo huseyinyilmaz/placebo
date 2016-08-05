@@ -192,7 +192,7 @@ class HttprettyRegexTestCase(unittest.TestCase):
 
     @HttprettyCatchAllMock.decorate
     @HttprettyRegexMock.decorate
-    def test_all_regex(self):
+    def test_regex_url(self):
         response = requests.get('http://www.example.com/test')
         self.assertEqual(response.json(), HttprettyCatchAllMock.item)
         response = requests.get('http://www.example.com')
