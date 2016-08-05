@@ -119,31 +119,86 @@ class StringValuesTestCase(unittest.TestCase):
         if not utils.is_httpretty:
             self.assertEqual(response2.headers, GetMock.headers2)
 
+###################################
+# Regex tests for httmock backend #
+###################################
 
-# There is still some tests to be done to make regexes compatible with
-# both backends.
 
-class RegexMock(utils.BasePlacebo):
-    item = {'name': 'Huseyin', 'last_name': 'Yilmaz'}
-
-    # Data for placebo interface
-    def url(self):
-        return parse.ParseResult(
-            scheme='http',
-            netloc='www.example.com',
-            path='',
-            params='',
-            query='',
-            fragment='')
+class HttmockCatchAllMock(utils.BasePlacebo):
+    item = {'all': True}
+    url = parse.ParseResult(
+        scheme='',
+        netloc=r'.*',
+        path='',
+        params='',
+        query='',
+        fragment='')
     body = json.dumps(item)
-    headers = {'custom-header': 'OK',
-               'custom-header2': 'Second header'}
 
 
-# @unittest.skipTest
-# class RegexTestCase(unittest.TestCase):
-#     @RegexMock.decorate
-#     def test_all_regex(self):
-#         response = requests.get('http://www.example.com/test')
-#         print(response.json())
-#         print(response)
+class HttmockRegexMock(utils.BasePlacebo):
+    item = {'name': 'Huseyin', 'last_name': 'Yilmaz'}
+    url = parse.ParseResult(
+        scheme='',
+        netloc=r'^(.*\.)?example\.com$',
+        path=r'^/items/(\d+)/$',
+        params='',
+        query='',
+        fragment='')
+    body = json.dumps(item)
+
+
+@unittest.skipUnless(utils.is_httmock,
+                     "Httmock specific regex tests")
+class HttMockRegexTestCase(unittest.TestCase):
+
+    @HttmockCatchAllMock.decorate
+    @HttmockRegexMock.decorate
+    def test_all_regex(self):
+        response = requests.get('http://www.example.com/test')
+        self.assertEqual(response.json(), HttmockCatchAllMock.item)
+        response = requests.get('http://www.example.com')
+        self.assertEqual(response.json(), HttmockCatchAllMock.item)
+        response = requests.get('http://www.example.com/items/alpha/')
+        self.assertEqual(response.json(), HttmockCatchAllMock.item)
+
+        response = requests.get('http://www.example.com/items/1/')
+        self.assertEqual(response.json(), HttmockRegexMock.item)
+        response = requests.get('https://www.example.com/items/2/')
+        self.assertEqual(response.json(), HttmockRegexMock.item)
+
+###############################
+# Regex for httpretty backend #
+###############################
+
+
+class HttprettyCatchAllMock(utils.BasePlacebo):
+    item = {'all': True}
+    url = r'.*'
+    body = json.dumps(item)
+
+
+class HttprettyRegexMock(utils.BasePlacebo):
+    item = {'name': 'Huseyin', 'last_name': 'Yilmaz'}
+    url = 'http://www.example.com/items/(?P<item_id>\w+)/'
+    body = json.dumps(item)
+
+
+@unittest.skipUnless(utils.is_httpretty,
+                     "Httpretty specific regex tests")
+class HttprettyRegexTestCase(unittest.TestCase):
+
+    @HttprettyCatchAllMock.decorate
+    @HttprettyRegexMock.decorate
+    def test_all_regex(self):
+        response = requests.get('http://www.example.com/test')
+        self.assertEqual(response.json(), HttprettyCatchAllMock.item)
+        response = requests.get('http://www.example.com')
+        self.assertEqual(response.json(), HttprettyCatchAllMock.item)
+        response = requests.get('http://www.example.com/items/alpha/')
+        self.assertEqual(response.json(), HttprettyCatchAllMock.item)
+
+        response = requests.get('http://www.example.com/items/1/')
+        self.assertEqual(response.json(), HttprettyRegexMock.item)
+        response = requests.get('https://www.example.com/items/2/')
+        self.assertEqual(response.json(), HttprettyRegexMock.item)

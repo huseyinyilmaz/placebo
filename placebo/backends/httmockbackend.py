@@ -18,6 +18,10 @@ def get_decorator(placebo):
         'query': url.query
     }
 
+    match_kwargs = {k: v
+                    for k, v in match_kwargs.items()
+                    if v}
+    print(match_kwargs)
     @httmock.urlmatch(**match_kwargs)
     def mock_response(url, request):
         # Convert parse result type from SplitResult to ParseResult
