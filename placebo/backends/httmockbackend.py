@@ -1,10 +1,15 @@
 from six.moves.urllib import parse
-
+import six
 import httmock
 
 
 def get_decorator(placebo):
     url = placebo._get_url()
+
+    if isinstance(url, six.string_types):
+        url = parse.urlparse(url)
+
+    # TODO should we remove empty parts of url?
     match_kwargs = {
         'scheme': url.scheme,
         'netloc': url.netloc,
@@ -12,8 +17,6 @@ def get_decorator(placebo):
         'method': placebo._get_method(),
         'query': url.query
     }
-    # remove None values
-    # match_kwargs = {k: v for k, v in match_kwargs.items() if v is not None}
 
     @httmock.urlmatch(**match_kwargs)
     def mock_response(url, request):

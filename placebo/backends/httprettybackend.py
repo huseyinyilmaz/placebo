@@ -32,8 +32,11 @@ def get_decorator(placebo):
                                                       request.body)
                     return (placebo.status, response_headers, response_body)
                     # return response.status, response.headers, response.data
+                url = placebo._get_url()
+                if isinstance(url, (parse.ParseResult, parse.SplitResult)):
+                    url = url.geturl()
                 httpretty.register_uri(getattr(httpretty, method),
-                                       placebo._get_url().geturl(),
+                                       url,
                                        body=get_body)
                 response = fun(*args, **kwargs)
                 return response

@@ -2,7 +2,7 @@ from functools import partial
 from functools import wraps
 import six
 
-from six.moves.urllib import parse
+# from six.moves.urllib import parse
 
 from placebo import backends
 from placebo.utils.datautils import invoke_or_get
