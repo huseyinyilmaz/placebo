@@ -7,7 +7,7 @@ Welcome to Placebo's documentation!
 ===================================
 
 Introduction
-------------
+============
 
 Placebo is a tool for mocking external API's in python applications. It uses httmock or httpretty as mocking backend.
 
@@ -157,16 +157,13 @@ After having all the data in place we can use our placebo class to decorate our 
 
 As a matter of fact, placebo object is not only usefull for testing. You can add the decorator your views and develop your application against your test data.
 
+INSTALLATION
+============
 
-.. toctree::
-   :maxdepth: 2
+placebo can be installed using pip
 
+.. code-block:: bash
 
+   $ pip install python-placebo
 
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
-
+Or source code can be downloaded from github.

@@ -5,10 +5,11 @@ from setuptools import setup
 
 logging.basicConfig()
 VERSION = '0.0.1'
-DESCRIPTION = 'placebo'
+DESCRIPTION = ('Placebo is a tool for mocking '
+               'external API\'s in python applications.')
 
 setup(
-    name='placebo',
+    name='python-placebo',
     version=VERSION,
     description=DESCRIPTION,
     url='https://github.com/huseyinyilmaz/placebo',
