@@ -1,6 +1,5 @@
 import json
 from placebo import Placebo
-from placebo.backends.httprettybackend import get_decorator
 
 
 class GetMovieValidResponse(Placebo):
@@ -11,7 +10,7 @@ class GetMovieValidResponse(Placebo):
 
     url = 'http://www.omdbapi.com/'
     body = json.dumps({
-        'Actors': 'Keanu Reeves, Laurence Fishburne, Carrie-Anne Moss, Hugo Weaving',
+        'Actors': 'Keanu Reeves, Laurence Fishburne, Carrie-Anne Moss, Hugo Weaving',  # noqa
         'Awards': 'Won 4 Oscars. Another 33 wins & 44 nominations.',
         'Country': 'USA',
         'Director': 'Lana Wachowski, Lilly Wachowski',
@@ -32,6 +31,7 @@ class GetMovieValidResponse(Placebo):
         'imdbRating': '8.7',
         'imdbVotes': '1,204,431'})
 
-
-class GetMovieValidResponseHttPretty(GetMovieValidResponse):
-    backend = get_decorator
+    expected_api_response = {'director': 'Lana Wachowski, Lilly Wachowski',
+                             'rated': 'R',
+                             'language': 'English',
+                             'title': 'The Matrix'}
