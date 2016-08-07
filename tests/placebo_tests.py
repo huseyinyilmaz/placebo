@@ -23,7 +23,7 @@ class GetMock(utils.BasePlacebo):
                'custom-header2': 'Second header'}
 
 
-class StringValuesTestCase(unittest.TestCase):
+class DecoratorTestCase(unittest.TestCase):
 
     def assertHeadersEqual(self, heads_a, heads_b):
         """Do not test for common headers for httpretty.
@@ -119,6 +119,19 @@ class StringValuesTestCase(unittest.TestCase):
         self.assertEqual(response2.json(), GetMock.item2)
         if not utils.is_httpretty:
             self.assertEqual(response2.headers, GetMock.headers2)
+
+    @GetMock.decorate(arg_name='second')
+    @GetMock.decorate(url=GetMock.url2, arg_name='first')
+    def test_arg_name(self, first, second):
+        response = requests.get(GetMock.url)
+        response2 = requests.get(GetMock.url2)
+        # just to make sure we got good response back
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response2.status_code, 200)
+        # make sure both requests have correct last_request
+        self.assertEqual(first.last_request.url, first.url2)
+        self.assertEqual(second.last_request.url, second.url)
+
 
 ###################################
 # Regex tests for httmock backend #
