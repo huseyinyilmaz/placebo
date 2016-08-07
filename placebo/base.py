@@ -21,6 +21,8 @@ class PlaceboData(object):
     status = 200
     # Backend method for this instance
     backend = None
+    # Will be overritten in first request
+    last_request = None
 
     def __init__(self,
                  f=None,

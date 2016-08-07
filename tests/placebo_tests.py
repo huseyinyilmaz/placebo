@@ -131,6 +131,37 @@ class DecoratorTestCase(unittest.TestCase):
         # make sure both requests have correct last_request
         self.assertEqual(first.last_request.url, first.url2)
         self.assertEqual(second.last_request.url, second.url)
+        # Class keeps last request on it. But it will store
+        # last_request for all instances.
+        self.assertEqual(GetMock.last_request.url, first.url2)
+
+    @GetMock.decorate(url=parse.urlparse(GetMock.url))
+    def test_url_as_parseresult(self):
+        response = requests.get(GetMock.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), GetMock.item)
+        self.assertHeadersEqual(response.headers, GetMock.headers)
+
+    @GetMock.decorate(url=parse.urlsplit(GetMock.url))
+    def test_url_as_splitresult(self):
+        response = requests.get(GetMock.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), GetMock.item)
+        self.assertHeadersEqual(response.headers, GetMock.headers)
+
+    @GetMock.decorate(method='POST', arg_name='mock')
+    def test_last_request(self, mock):
+        response = requests.post(GetMock.url,
+                                 headers={'custom-header': 'huseyin'},
+                                 data={'name': 'huseyin'})
+        self.assertEqual(response.status_code, 200)
+        last_request = mock.last_request
+        # Test if last request has expected values.
+        self.assertEqual(last_request.url, GetMock.url)
+        self.assertEqual(last_request.headers['custom-header'], 'huseyin')
+        self.assertEqual(last_request.body, 'name=huseyin')
+        # Make sure that class's last_request is same as instances.
+        self.assertIs(GetMock.last_request, mock.last_request)
 
 
 ###################################

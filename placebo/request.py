@@ -11,7 +11,7 @@ class PlaceboRequest(object):
     headers = None
     body = None
 
-    def __init__(self, url, headers, data):
+    def __init__(self, url, headers, body):
         if isinstance(url, (parse.ParseResult, parse.SplitResult)):
             self.url = url.geturl()
             self.parsed_url = url
@@ -20,7 +20,7 @@ class PlaceboRequest(object):
             self.parsed_url = parse.urlparse(url)
 
         self.headers = headers
-        self.data = data
+        self.body = body
 
     def __str__(self):
         return '<PlaceboRequest %s>' % self.url

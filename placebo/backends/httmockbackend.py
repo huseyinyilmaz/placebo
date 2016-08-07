@@ -30,7 +30,6 @@ def get_decorator(placebo):
         # but we want ot to be always string.
         body = request.body or ''
         headers = request.headers
-        placebo._last_request = request
         return {'status_code': placebo._get_status(),
                 'content': placebo._get_body(url, headers, body),
                 'headers': placebo._get_headers(url, headers, body)}
