@@ -1,4 +1,5 @@
 """Data conversation related functions."""
+import six
 
 
 def invoke_or_get(f, *args, **kwargs):
@@ -7,7 +8,7 @@ def invoke_or_get(f, *args, **kwargs):
     This function is used to provide options to give methods instead of
     attributes.
     """
-    if callable(f):
+    if six.callable(f):
         return f(*args, **kwargs)
     else:
         return f

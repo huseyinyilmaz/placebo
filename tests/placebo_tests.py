@@ -4,7 +4,7 @@ import re
 import unittest
 import requests
 from tests import utils
-
+import six
 from six.moves.urllib import parse
 
 
@@ -158,7 +158,13 @@ class DecoratorTestCase(unittest.TestCase):
         last_request = mock.last_request
         # Test if last request has expected values.
         self.assertEqual(last_request.url, GetMock.url)
-        self.assertEqual(last_request.body, 'name=huseyin')
+
+        body = last_request.body
+        # In python 3 httpretty backend returns binary string for body.
+        # So we are decoding it back to unicode to test.
+        if isinstance(body, six.binary_type):
+            body = body.decode('utf-8')
+        self.assertEqual(body, 'name=huseyin')
         # httpretty is failing to receive custom headers.
         # So I will disable this test for httpretty until it is
         # fixed.
