@@ -15,7 +15,7 @@ Placebo is a tool for mocking external API's in python applications. It uses htt
 Why this is useful
 ------------------
 
-Lets think about testing following function.
+Consider following function:
 
 .. code-block:: python
 
@@ -40,7 +40,9 @@ Lets think about testing following function.
             'rated': resp['Rated'],
             'title': resp['Title']}
 
-To test this client, we could write following test case:
+Let's think about how we could test this function. A classic way to test this code is
+following:
+
 
 .. code-block:: python
 
@@ -88,7 +90,9 @@ To test this client, we could write following test case:
            movie = get_movie('matrix', 1999)
            self.assertEqual(movie, None)
 
-This is a classic example of api client testing. It has two main disadvantages. First, code for mocking and actual function invocation is done in the same place which makes it hard to read. Second, if we keep writing similar tests we will probably copy the data for every test.
+This tests are fine. But they has two main disadvantages. First, code for mocking and actual function invocation is done in the same place which makes it hard to read. Second, if we keep writing similar tests we will probably copy the data for every test.
+
+Purpose of placebo is to separate data from the actual tests. So It would be a lot easier to reason about.
 
 Here is how same code could be implemented with placebo:
 
@@ -132,7 +136,7 @@ First we create a placebo object for that endpoint.
                                 'title': 'The Matrix'}
 
 
-After having all the data in place we can use our placebo class to decorate our test functions like this. In first method, we directly used the placebo object. In the second method we changed the status of the object to 500 and tested the error case. Notice how logic for mocking the endpoint and test is seperated.
+After having all the data in place, we can use our placebo to decorate our test functions like this.
 
 .. code-block:: python
 
@@ -155,7 +159,10 @@ After having all the data in place we can use our placebo class to decorate our 
            self.assertEqual(movie, None)
 
 
-As a matter of fact, placebo object is not only usefull for testing. You can add the decorator your views and develop your application against your test data.
+In first method, we directly used the placebo object. In the second method we changed the status of the object to 500 and tested the error case. Notice how logic for mocking the endpoint and test is seperated.
+
+As a matter of fact, placebo object is not only usefull for testing. Since main interface is a decorator pattern,  you can use it on your any function you want, like views in your web application.
+
 
 INSTALLATION
 ============
@@ -172,3 +179,33 @@ USAGE
 =====
 
 Basic usage of placebo can be following
+
+.. code-block:: python
+
+   class SimplePlacebo(Placebo):
+       url = 'http://www.acme.com/items/'
+       body = '[{"id": 1}, {"id": 2}, {"id": 3}]'
+
+When we decorate a function with this placebo object, every get request to http://www.acme.com/items/ url will return 200 response with following body '[{"id": 1}, {"id": 2}, {"id": 3}]'.
+
+We can use this placebo in following test:
+
+.. code-block:: python
+
+   @SimplePlacebo.decorate
+   def test_get_list_valid(self):
+       api = ItemAPIClient()
+       result = api.get_items()
+       self.assertEqual(result,
+                        [{"id": 1}, {"id": 2}, {"id": 3}])
+
+Defaut value for status code is 200 and default value for http method is 'GET'. So we did not need to specify those values in our object. If we wanted to specify all fields. We could do something like following:
+
+.. code-block:: python
+
+class SimplePlaceboWithAllFields(Placebo):
+    url = 'http://www.acme.com/items/'
+    body = '[{"id": 1}, {"id": 2}, {"id": 3}]'
+    status = 200
+    method = 'GET'
+    headers = {'custom-header': 'custom'}

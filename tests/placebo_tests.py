@@ -268,5 +268,6 @@ class HttprettyRegexTestCase(unittest.TestCase):
         # Urls that matches regex
         response = requests.get('http://www.example.com/items/1/')
         self.assertEqual(response.json(), HttprettyRegexMock.item)
-        response = requests.get('https://www.example.com/items/2/?name=abc&second=&third=2')
+        response = requests.get(
+            'https://www.example.com/items/2/?name=abc&second=&third=2')
         self.assertEqual(response.json(), HttprettyRegexMock.item)

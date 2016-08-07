@@ -34,6 +34,10 @@ class ItemAPIClient:
         else:
             return response.json()
 
+###################
+# PLACEBO OBJECTS #
+###################
+
 
 class SimplePlacebo(Placebo):
     url = 'http://www.acme.com/items/'
@@ -47,6 +51,10 @@ class SimplePlaceboWithAllFields(Placebo):
     method = 'GET'
     headers = {'custom-header': 'custom'}
 
+
+#############
+# UNITTESTS #
+#############
 
 class SimpleTestCase(unittest.TestCase):
 
