@@ -167,3 +167,8 @@ placebo can be installed using pip
    $ pip install python-placebo
 
 Or source code can be downloaded from github.
+
+USAGE
+=====
+
+Basic usage of placebo can be following

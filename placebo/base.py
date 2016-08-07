@@ -2,9 +2,8 @@ from functools import partial
 from functools import wraps
 import six
 
-# from six.moves.urllib import parse
-
 from placebo import backends
+from placebo.request import PlaceboRequest
 from placebo.utils.datautils import invoke_or_get
 
 
@@ -60,9 +59,7 @@ class PlaceboData(object):
 
     def _get_body(self, url, headers, body):
         # we want to keep latest request to use do tests
-        self.latest_request = {'url': url,
-                               'headers': headers,
-                               'body': body}
+        self._set_last_request(url, headers, body)
         if self.body is NotImplemented:
             raise NotImplementedError('To use placebo, you need to either '
                                       'provide body attribute or '
@@ -126,17 +123,31 @@ class PlaceboData(object):
             backend = cls.backend
         return backend
 
+    @classmethod
+    def _set_last_request_on_class(cls, request):
+        cls.last_request = request
+
+    def _set_last_request(self, url, headers, body):
+        """Set last request on body to keep track of changes"""
+        request = PlaceboRequest(url, headers, body)
+        self._set_last_request_on_class(request)
+        self.last_request = request
+
 
 class Placebo(PlaceboData):
     """Base class for placebo mocks."""
 
     @classmethod
-    def mock(cls, f, **kwargs):
+    def mock(cls, f, arg_name=None, **kwargs):
         """Actual mock method."""
         # create a placebo instance for backend
         placebo = cls(**kwargs)
         # choose a backend
         backend = cls.get_backend()
+        # if arg_name is provided, add current
+        # placebo instance to function's kwargs.
+        if arg_name is not None:
+            f = wraps(f)(partial(f, **{arg_name: placebo}))
         # ask backend for decorator for current placebo instance.
         decorator = backend(placebo)
         # wrap decorator around curent function.
@@ -153,3 +164,9 @@ class Placebo(PlaceboData):
         else:
             result = cls.mock(*args, **kwargs)
         return result
+
+    def __str__(self):
+        return '<%s %s>' % (self.__class__.__name__, str(self.url))
+
+    def __repr__(self):
+        return str(self)

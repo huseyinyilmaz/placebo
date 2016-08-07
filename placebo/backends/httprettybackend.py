@@ -35,7 +35,7 @@ def get_decorator(placebo):
                 url = placebo._get_url()
                 if isinstance(url, (parse.ParseResult, parse.SplitResult)):
                     url = url.geturl()
-                print('httpretty url=%s' % url)
+
                 httpretty.register_uri(getattr(httpretty, method),
                                        url,
                                        body=get_body)
