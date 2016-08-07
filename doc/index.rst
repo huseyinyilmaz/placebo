@@ -203,9 +203,9 @@ Defaut value for status code is 200 and default value for http method is 'GET'. 
 
 .. code-block:: python
 
-class SimplePlaceboWithAllFields(Placebo):
-    url = 'http://www.acme.com/items/'
-    body = '[{"id": 1}, {"id": 2}, {"id": 3}]'
-    status = 200
-    method = 'GET'
-    headers = {'custom-header': 'custom'}
+   class SimplePlaceboWithAllFields(Placebo):
+       url = 'http://www.acme.com/items/'
+       body = '[{"id": 1}, {"id": 2}, {"id": 3}]'
+       status = 200
+       method = 'GET'
+       headers = {'custom-header': 'custom'}
