@@ -186,7 +186,7 @@ Basic usage of placebo can be following
        url = 'http://www.acme.com/items/'
        body = '[{"id": 1}, {"id": 2}, {"id": 3}]'
 
-When we decorate a function with this placebo object, every get request to http://www.acme.com/items/ url will return 200 response with following body '[{"id": 1}, {"id": 2}, {"id": 3}]'.
+When we decorate a function with this placebo object, every 'GET' request to http://www.acme.com/items/ url will return 200 response with following body '[{"id": 1}, {"id": 2}, {"id": 3}]'.
 
 We can use this placebo in following test:
 
@@ -209,3 +209,22 @@ Defaut value for status code is 200 and default value for http method is 'GET'. 
        status = 200
        method = 'GET'
        headers = {'custom-header': 'custom'}
+
+
+In placebo class, "url, body, status, method, headers attributes" can be used to define the mock request. method and url is used to figure out which requests should be mocked. Requests that does not match with given url and methods will not go to real backend. "body, status, headers" attributes are used as matching request content.
+
+There are 2 different ways those attributes can be used. First, by adding them to Placebo class. Second is update them on decorator. Following tests updates already defined objects with diffenrt status and body.
+
+.. code-block:: python
+
+    @SimplePlacebo.decorate(status=500)
+    def test_get_list_error(self):
+        api = ItemAPIClient()
+        with self.assertRaises(ItemException):
+            api.get_items()
+
+    @SimplePlacebo.decorate(body='invalid-body')
+    def test_get_list_invalid_body_error(self):
+        api = ItemAPIClient()
+        with self.assertRaises(ItemException):
+            api.get_items()

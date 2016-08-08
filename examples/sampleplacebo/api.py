@@ -71,6 +71,12 @@ class SimpleTestCase(unittest.TestCase):
         with self.assertRaises(ItemException):
             api.get_items()
 
+    @SimplePlacebo.decorate(body='invalid-body')
+    def test_get_list_invalid_body_error(self):
+        api = ItemAPIClient()
+        with self.assertRaises(ItemException):
+            api.get_items()
+
     @SimplePlaceboWithAllFields.decorate
     def test_valid_list_valid_full(self):
         api = ItemAPIClient()
