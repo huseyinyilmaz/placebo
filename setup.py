@@ -21,7 +21,7 @@ setup(
     test_suite='tests',
     tests_require=[
         'six',
-        'requests',
+        # 'requests',
         'httmock',
         'httpretty',
     ],
