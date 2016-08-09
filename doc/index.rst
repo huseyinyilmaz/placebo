@@ -22,7 +22,7 @@ Consider following function:
     def get_movie(title, year):
         """Sends a request to omdbapi to get movie data.
 
-        If there is a problem with connection returns None.
+        If there is a problem with connection, returns None.
         """
         url = 'http://www.omdbapi.com/'
 
@@ -92,7 +92,7 @@ following:
 
 This tests are fine. But they has two main disadvantages. First, code for mocking and actual function invocation is done in the same place which makes it hard to read. Second, if we keep writing similar tests we will probably copy the data for every test.
 
-Purpose of placebo is to separate data from the actual tests. So It would be a lot easier to reason about.
+Purpose of placebo is to separate data from the actual tests. So It would be a lot easier to reason about. Placebo mocks will also be reusable and composable.
 
 Here is how same code could be implemented with placebo:
 
@@ -102,10 +102,6 @@ First we create a placebo object for that endpoint.
 .. code-block:: python
 
    class GetMovieValidResponse(Placebo):
-
-       # mock related data. That will be used in tests.
-       title = 'matrix'
-       year = 1999
 
        url = 'http://www.omdbapi.com/'
        body = json.dumps({
@@ -143,11 +139,6 @@ After having all the data in place, we can use our placebo to decorate our test 
    class omdbapiTests(TestCase):
        """Omdb api test cases"""
    
-       expected_movie = {'director': 'Lana Wachowski, Lilly Wachowski',
-                         'rated': 'R',
-                         'language': 'English',
-                         'title': 'The Matrix'}
-   
        @GetMovieValidResponse.decorate
        def test_get_movie_valid_response(self):
            movie = get_movie('matrix', 1999)
@@ -159,15 +150,15 @@ After having all the data in place, we can use our placebo to decorate our test 
            self.assertEqual(movie, None)
 
 
-In first method, we directly used the placebo object. In the second method we changed the status of the object to 500 and tested the error case. Notice how logic for mocking the endpoint and test is seperated.
+In first method, we directly used the placebo object. In the second method we changed the status of the object to 500 and tested the error case. Notice how logic for mocking the endpoint and test is seperated. We also reused same object for testing the valid response and error case.
 
-As a matter of fact, placebo object is not only usefull for testing. Since main interface is a decorator pattern,  you can use it on your any function you want, like views in your web application.
+As a matter of fact, placebo object is not only usefull for testing. Since main interface is a decorator pattern,  you can use it on any function you want, like views in your web application. That way you can develop your applicarions against mock data or simulate error cases on your development environment very easily.
 
 
 Installation
 ============
 
-placebo can be installed using pip
+Placebo can be installed using pip
 
 .. code-block:: bash
 
@@ -211,7 +202,7 @@ Defaut value for status code is 200 and default value for http method is 'GET'. 
        headers = {'custom-header': 'custom'}
 
 
-In placebo class, "url, body, status, method, headers attributes" can be used to define the mock request. method and url is used to figure out which requests should be mocked. Requests that does not match with given url and methods will not go to real backend. "body, status, headers" attributes are used as matching request content.
+In placebo class, "url, body, status, method, headers attributes" can be used to define the mock request. method and url is used to figure out which requests should be mocked. Requests that does not match with given url and methods will go to real backend. "body, status, headers" attributes are used as matching request's content.
 
 There are 2 different ways those attributes can be specified. First, by adding them to Placebo class. Second is update them on decorator. Following tests updates already defined class with diffent status and body.
 
@@ -223,8 +214,12 @@ There are 2 different ways those attributes can be specified. First, by adding t
         with self.assertRaises(ItemException):
             api.get_items()
 
-    @SimplePlacebo.decorate(body='invalid-body')
+     @SimplePlacebo.decorate(body='invalid-body')
     def test_get_list_invalid_body_error(self):
         api = ItemAPIClient()
         with self.assertRaises(ItemException):
             api.get_items()
+
+Impementing Placebo classes
+===========================
+TODO..
