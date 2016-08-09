@@ -222,4 +222,36 @@ There are 2 different ways those attributes can be specified. First, by adding t
 
 Impementing Placebo classes
 ===========================
-TODO..
+
+Static placebo classes
+----------------------
+A placebo class can have following properties.
+
+
+   class SimplePlaceboWithAllFields(Placebo):
+       url = 'http://www.acme.com/items/'
+       method = 'GET'
+       body = '[{"id": 1}, {"id": 2}, {"id": 3}]'
+       status = 200
+       headers = {'custom-header': 'custom'}
+
+       backend = httprettybackend.get_decorator
+
+1) url = Url that will be matched to decide if placebo mock is applied. It can be a string, urlparse.ParseResult or urlparse.SplitResult.
+
+2) method = HTTP method that will be matched to decide if placebo mock is applied. It should be a string like GET, POST, PUT, DELETE. Default value for method is GET.
+
+3) body = If mock object is applied body will be used as response body. It should be type of string.
+
+4) status = If mock object is applied status will be used as http status code of response. It should be an integer like 200, 404 or 500. Default value for status is 200.
+
+5) headers = If mock is applied headers will be used as http headers. type of headers should be a dictionary. (Keys should be header names and values should be header values.)
+
+6) backend = Backends provides actual functionality of placebo. Currently there are two different backends are supported by default. httpretty and httmock. By default httmock is tried if it cannot be imported httpretty is tried. backend is basically a function that gets a placebo object as argument and mocks the current apis.
+
+Dynamic placebo classes
+-----------------------
+
+Previous pacebo class has static properties width already defined values. Most of the properties of placebo object can also be defined as methods there fore values can be calculated on the fly.
+
+TODO
