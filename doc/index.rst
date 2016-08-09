@@ -227,6 +227,7 @@ Static placebo classes
 ----------------------
 A placebo class can have following properties.
 
+.. code-block:: python
 
    class SimplePlaceboWithAllFields(Placebo):
        url = 'http://www.acme.com/items/'
