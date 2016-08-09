@@ -164,7 +164,7 @@ In first method, we directly used the placebo object. In the second method we ch
 As a matter of fact, placebo object is not only usefull for testing. Since main interface is a decorator pattern,  you can use it on your any function you want, like views in your web application.
 
 
-INSTALLATION
+Installation
 ============
 
 placebo can be installed using pip
@@ -175,8 +175,8 @@ placebo can be installed using pip
 
 Or source code can be downloaded from github.
 
-USAGE
-=====
+Basic Usage
+===========
 
 Basic usage of placebo can be following
 
@@ -186,7 +186,7 @@ Basic usage of placebo can be following
        url = 'http://www.acme.com/items/'
        body = '[{"id": 1}, {"id": 2}, {"id": 3}]'
 
-When we decorate a function with this placebo object, every 'GET' request to http://www.acme.com/items/ url will return 200 response with following body '[{"id": 1}, {"id": 2}, {"id": 3}]'.
+When we decorate a function with this placebo class, every 'GET' request to http://www.acme.com/items/ url will return 200 response with following body '[{"id": 1}, {"id": 2}, {"id": 3}]'.
 
 We can use this placebo in following test:
 
@@ -199,7 +199,7 @@ We can use this placebo in following test:
        self.assertEqual(result,
                         [{"id": 1}, {"id": 2}, {"id": 3}])
 
-Defaut value for status code is 200 and default value for http method is 'GET'. So we did not need to specify those values in our object. If we wanted to specify all fields. We could do something like following:
+Defaut value for status code is 200 and default value for http method is 'GET'. So we did not need to specify those values in our class. If we wanted to specify all fields, we could do something like this:
 
 .. code-block:: python
 
@@ -213,7 +213,7 @@ Defaut value for status code is 200 and default value for http method is 'GET'. 
 
 In placebo class, "url, body, status, method, headers attributes" can be used to define the mock request. method and url is used to figure out which requests should be mocked. Requests that does not match with given url and methods will not go to real backend. "body, status, headers" attributes are used as matching request content.
 
-There are 2 different ways those attributes can be used. First, by adding them to Placebo class. Second is update them on decorator. Following tests updates already defined objects with diffenrt status and body.
+There are 2 different ways those attributes can be specified. First, by adding them to Placebo class. Second is update them on decorator. Following tests updates already defined class with diffent status and body.
 
 .. code-block:: python
 
