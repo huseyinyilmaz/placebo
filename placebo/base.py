@@ -103,8 +103,8 @@ class PlaceboData(object):
                              (type(method), method))
         return method.upper()
 
-    def _get_status(self):
-        return invoke_or_get(self.status)
+    def _get_status(self, url, headers, body):
+        return invoke_or_get(self.status, url, headers, body)
 
     @classmethod
     def _resolve_backend(cls):

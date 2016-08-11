@@ -30,7 +30,8 @@ def get_decorator(placebo):
                     response_body = placebo._get_body(url,
                                                       headers,
                                                       request.body)
-                    return (placebo.status, response_headers, response_body)
+                    status = placebo._get_status(url, headers, request.body)
+                    return (status, response_headers, response_body)
                     # return response.status, response.headers, response.data
                 url = placebo._get_url()
                 if isinstance(url, (parse.ParseResult, parse.SplitResult)):
