@@ -504,4 +504,32 @@ Httpretty backend, requires url attribute to have type of regex pattern. If rege
 Backends
 ========
 
-TODO
+Placebo depends on other 3rd libraries for mocking functionality. Backends are integration points for placebo to use those libraries. For now placebo comes with 2 backends. Those are httmock backend and httpretty backend.
+
+Because there are multiple backends, backend libraries are not in the list of requirements of placebo. At least one of them must be installed seperately before using placebo.
+
+By default, placebo tries to import httmock backend if it is not successfull (meaning httmock is not installed.). httpretty backend is used. If httpretty is not installed either initializatin will fail and placebo will raise an error.
+
+If both libraries are installed and we want to use different backend, backend attribute of placebo can be used to specified which backends to use.
+
+Implementing a custom backend
+-----------------------------
+
+Backend is a function that accepts a placebo instance as an arguments and returns a decorator. Placebo object has special methods for backends to consume placebo data. Those methods are:
+
+.. code-block:: python
+
+   class Placebo(object):
+       def _get_url(self):
+           ...
+       def _get_method(self):
+           ...
+       def _get_status(self, url, headers, body):
+           ...
+       def _get_body(self, url, headers, body):
+           ...
+       def _get_headers(self, url, headers, body):
+           ...
+
+From those methods _get_url and _get_method can be invoked on decorator initialization. But rest of the methods must be called for each request. There for they can only be invoked from inside the decorator. (See `placebo/backends/` directory for example implementations.)
+
