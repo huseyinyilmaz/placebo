@@ -2,9 +2,10 @@ import unittest
 import json
 import requests
 from placebo import Placebo
+from placebo.backends.httmockbackend import get_decorator
 import re
 from six.moves.urllib import parse
-import six
+
 
 ######################
 # API client to test #
@@ -56,13 +57,16 @@ class SimplePlaceboWithAllFields(Placebo):
 
 
 class DynamicPlacebo(Placebo):
+
+    backend = get_decorator
+
     url_regex = re.compile('^http://www.acme.com/items/(?P<item_id>\d+)/$')
 
     def url(self):
         return parse.ParseResult(
             scheme='http',
             netloc=r'www\.acme\.com',
-            path=r'^/items/(\d+)/$',
+            path=r'^/items/(\w+)/$',
             params='',
             query='',
             fragment='')
@@ -72,14 +76,27 @@ class DynamicPlacebo(Placebo):
 
     def body(self, request_url, request_headers, request_body):
         url = request_url.geturl()
-        item_id = self.url_regex.match(url).groupdict()['item_id']
-        return json.dumps({'id': int(item_id)})
+        regex_result = self.url_regex.match(url)
+        if regex_result:
+            item_id = int(regex_result.groupdict()['item_id'])
+            return json.dumps({'id': int(item_id)})
+        else:
+            return ''
 
     def headers(self, request_url, request_headers, request_body):
         return {}
 
     def status(self, request_url, request_headers, request_body):
-        return 200
+        """If item_id is not integer return 404."""
+
+        url = request_url.geturl()
+        regex_result = self.url_regex.match(url)
+        # if item_id is not a number return 404
+        if regex_result:
+            status = 200
+        else:
+            status = 404
+        return status
 
 
 #############
@@ -118,7 +135,6 @@ class SimpleTestCase(unittest.TestCase):
 
 class DynamicPlaceboTestCase(unittest.TestCase):
 
-
     @DynamicPlacebo.decorate
     def test_get_item_valid(self):
         api = ItemAPIClient()
@@ -128,6 +144,12 @@ class DynamicPlaceboTestCase(unittest.TestCase):
         # id = 2
         resp = api.get_item(2)
         self.assertEqual(resp, {'id': 2})
+
+    @DynamicPlacebo.decorate
+    def test_get_item_invalid(self):
+        api = ItemAPIClient()
+        with self.assertRaises(ItemException):
+            api.get_item('invalid_id')
 
 
 if __name__ == '__main__':

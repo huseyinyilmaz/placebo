@@ -253,6 +253,51 @@ A placebo class can have following properties.
 Dynamic placebo classes
 -----------------------
 
-Previous pacebo class has static properties width already defined values. Most of the properties of placebo object can also be defined as methods there fore values can be calculated on the fly.
+Previous pacebo class has static properties width already defined values. Most of the properties of placebo object can also be defined as methods therefore values can be calculated on the fly. Here is an example placebo objects that returns a mock response with id it receives. If id is not an integer, it returns 404 response. Even though those kind of placebo objects are not suitable for tests, they are very usefull for development.
 
-TODO
+
+.. code-block:: python
+
+   class DynamicPlacebo(Placebo):
+
+       backend = httmockbackend
+
+       url_regex = re.compile('^http://www.acme.com/items/(?P<item_id>\d+)/$')
+   
+       def url(self):
+           return parse.ParseResult(
+               scheme='http',
+               netloc=r'www\.acme\.com',
+               path=r'^/items/(\w+)/$',
+               params='',
+               query='',
+               fragment='')
+   
+       def method(self):
+           return 'GET'
+   
+       def body(self, request_url, request_headers, request_body):
+           url = request_url.geturl()
+           regex_result = self.url_regex.match(url)
+           if regex_result:
+               item_id = int(regex_result.groupdict()['item_id'])
+               return json.dumps({'id': int(item_id)})
+           else:
+               return ''
+   
+       def headers(self, request_url, request_headers, request_body):
+           return {}
+   
+       def status(self, request_url, request_headers, request_body):
+           """If item_id is not integer return 404."""
+   
+           url = request_url.geturl()
+           regex_result = self.url_regex.match(url)
+           # if item_id is not a number return 404
+           if regex_result:
+               status = 200
+           else:
+               status = 404
+           return status
+
+As seen in the example, almost all the properties of Placebo object can be written as methods. Some properties are evaluated for each request therefore receives url, headers, body. Rest of the properties are evaluated only once on initialization therefore does not receive any extra information about the request. Only property that cannot be implemented as method is backend. The reason for that is backend has a type of function so we cannot distinguish backends from methods that returns backends.
