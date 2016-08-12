@@ -113,14 +113,12 @@ class DecoratorTestCase(unittest.TestCase):
         response = requests.get(GetMock.url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), GetMock.item)
-        if not utils.is_httpretty:
-            self.assertHeadersEqual(response.headers, GetMock.headers)
+        self.assertHeadersEqual(response.headers, GetMock.headers)
         # test second decorator data
         response2 = requests.post(GetMock.url2)
         self.assertEqual(response2.status_code, 500)
         self.assertEqual(response2.json(), GetMock.item2)
-        if not utils.is_httpretty:
-            self.assertEqual(response2.headers, GetMock.headers2)
+        self.assertHeadersEqual(response2.headers, GetMock.headers2)
 
     @GetMock.decorate
     @GetMock.decorate(url=GetMock.url,
