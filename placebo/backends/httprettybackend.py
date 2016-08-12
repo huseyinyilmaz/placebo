@@ -19,18 +19,23 @@ def get_decorator(placebo):
             def _run():
                 method = placebo._get_method()
 
-                def get_body(request, uri, headers):
+                def get_body(request, uri, _headers):
+
+                    request_headers = dict(request.headers)
+                    # request_headers = headers
                     url = parse.urlparse(uri)
                     response_headers = placebo._get_headers(url,
-                                                            headers,
+                                                            request_headers,
                                                             request.body)
                     if response_headers:
                         logger.warn(HEADER_WARNING)
 
                     response_body = placebo._get_body(url,
-                                                      headers,
+                                                      request_headers,
                                                       request.body)
-                    status = placebo._get_status(url, headers, request.body)
+                    status = placebo._get_status(url,
+                                                 request_headers,
+                                                 request.body)
                     return (status, response_headers, response_body)
                     # return response.status, response.headers, response.data
                 url = placebo._get_url()

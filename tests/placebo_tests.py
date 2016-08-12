@@ -3,6 +3,7 @@ import json
 import re
 import unittest
 import requests
+from placebo import Placebo
 from tests import utils
 import six
 from six.moves.urllib import parse
@@ -132,8 +133,8 @@ class DecoratorTestCase(unittest.TestCase):
         response = requests.get(GetMock.url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), GetMock.item)
-        if not utils.is_httpretty:
-            self.assertHeadersEqual(response.headers, GetMock.headers)
+        # if not utils.is_httpretty:
+        self.assertHeadersEqual(response.headers, GetMock.headers)
         # test second decorator data
         response2 = requests.post(GetMock.url)
         self.assertEqual(response2.status_code, 500)
@@ -186,12 +187,8 @@ class DecoratorTestCase(unittest.TestCase):
         if isinstance(body, six.binary_type):
             body = body.decode('utf-8')
         self.assertEqual(body, 'name=huseyin')
-        # httpretty is failing to receive custom headers.
-        # So I will disable this test for httpretty until it is
-        # fixed.
-        if not utils.is_httpretty:
-            self.assertEqual(last_request.headers.get('custom-header'),
-                             'huseyin')
+        self.assertEqual(last_request.headers.get('custom-header'),
+                         'huseyin')
         # Make sure that class's last_request is same as instances.
         self.assertIs(GetMock.last_request, mock.last_request)
 
@@ -209,6 +206,16 @@ class DecoratorTestCase(unittest.TestCase):
         self.assertEqual(response.json(), GetMock.item)
         self.assertHeadersEqual(response.headers, GetMock.headers)
 
+    @Placebo.decorate(url='http://www.example.com/api/item',
+                      body=json.dumps({'name': 'Huseyin',
+                                       'last_name': 'Yilmaz'}))
+    def test_placebo_without_subclass(self):
+        url = 'http://www.example.com/api/item'
+        expected_response = {'name': 'Huseyin', 'last_name': 'Yilmaz'}
+
+        response = requests.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), expected_response)
 
 ###################################
 # Regex tests for httmock backend #

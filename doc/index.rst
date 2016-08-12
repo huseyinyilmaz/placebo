@@ -166,8 +166,13 @@ Placebo can be installed using pip
 
 Or source code can be downloaded from github.
 
-Basic Usage
-===========
+Usage
+=====
+
+Implementation example
+----------------------
+
+(Detailed description will be in Implementing placebo classes section)
 
 Basic usage of placebo can be following
 
@@ -319,3 +324,131 @@ This section aims to describe each placebo properties in detail.
 
 
 - *backend*: Backend property is a meta property instead of a filter or response property. It is a backend that Placebo object is used to create mock objects. Currently there are 2 backends. Those are backends.httpprettybackend.get_decorator` and `placebo.backends.httmockbackend.get_decorator`. backend attribute cannot be implemented as a method. Type of backend is a function. (function that gets a Placebo instance as argument and returns a decorator that applies that placebo object. More explanation can be found in Implementing backends section.) 
+
+Using placebo classes as decorator
+==================================
+
+Interface for a placebo class is a decorator. To use a placebo class, decorate method of
+class is used to decorate a function.
+
+.. code-block:: python
+
+    @SimplePlacebo.decorate
+    def function_to_mock(arg1, arg2):
+        ...
+
+Placebo decorator can also accepts attributes. All placebo attributes explains above as argument.
+
+.. code-block:: python
+
+    @SimplePlacebo.decorate(url='http://www.example.com/api/item',
+                            body='response body')
+    def function_to_mock(arg1, arg2):
+        ...
+
+Placebo decorator can accept following arguments:
+
+.. code-block:: python
+
+    @Placebo.decorate(url='http://www.example.com/api/item',
+                      body='response body'
+                      status=200,
+                      method='GET',
+                      headers={'custom-header': 'custom_value},
+                      backend=httmockbackend.get_decorator,
+                      arg_name='item_mock' # arg_name will be explained in getting placebo instance section.
+                      )
+    def function_to_mock(arg1, arg2, item_mock):
+        ...                      
+
+                      
+Getting a placebo instance
+==========================
+
+In placebo interface, Placebo class is used to decorate functions. When we decorate a function with a placebo class, an object for that class is instantiated an used to decorate current function. So each decorated function gets its own object to hold its mock information. Because object instantiation is handled by Placebo, there is no direct access to actual instance for each funciton. But for some edge cases,there is a need to access placebo objects. In those cases arg_name attribute of decorator can be used. If arg_name argument is specified current Placebo instance will be passed to decorated function as a keyword argument with given name. See `Accessing the last mocked request` section for usecase.
+
+.. code-block:: python
+
+    @SimplePlacebo.decorate(arg_name='simple_mock')
+    def function_to_mock(arg1, arg2, simple_mock):
+        ...
+
+Accessing the last mocked request
+=================================
+
+Some times, we might want to access to last mocked request. There is 2 ways to do this. We can access last request that is located on class.
+
+.. code-block:: python
+
+    @SimplePlacebo.decorate
+    def function_to_mock(arg1, arg2):
+        #
+        # Do api call
+        #
+        items = get_items()
+        #
+        # Get last request
+        #
+        last_request = SimplePlacebo.last_request
+        # 
+        # Now we have last request so we can extract
+        # last request info from it to use in our tests.
+        #
+        # Get request url as string
+        request_url = last_request.url
+        # Get request url as urlparse.ParseResult
+        request_parsed_url = last_request.parsed_url
+        # Get request body
+        request_body = last_request.body
+        # Get request headers
+        request_headers = last_request.headers
+        # Get query parameters
+        request_query_params = last_request.query
+        ...
+
+Accesing placebo object through class is really easy and does not require any change on rest of our code (`last_request = SimplePlacebo.last_request`). But there is a downside to this aproach. Since last_request here is a class attribute, it is shared by all instances. So, if get_items call fails to do a request, we can still have a last_request attribute on class becuase another test might be using same Placebo and already register a last request before our test is run.
+To solve this problem Placebo instances also have a last_request. That way you can access last_request only mocked by current instance.
+
+To get last_request from instance, first we need access to instance of Placebo we want to use. Here is an example:
+
+.. code-block:: python
+
+    @SimplePlacebo.decorate(arg_name='first_page_mock')
+    @SimplePlacebo.decorate(url='http://www.example.com/api/item?page=2',
+                            arg_name='second_page_mock')
+    def function_to_mock(arg1, arg2,
+                         first_page_mock,
+                         second_page_mock):
+        #
+        # Do api call
+        #
+        items = get_items()
+        items = get_items(page=2)
+        #
+        # Get last request
+        #
+        last_request = first_page_mock.last_request
+        last_request2 = second_page_mock.last_request
+        last_request_class = SimplePlacebo.last_request
+        #
+        # Since last request is request for second page,
+        # last_request on class will be the request for second
+        # page.
+        self.assertIs(last_request2, last_request_class)
+        # 
+        # Now we have last request so we can extract
+        # last request info from it to use in our tests.
+        #
+        # Get request url as string
+        request_url = last_request.url
+        # Get request url as urlparse.ParseResult
+        request_parsed_url = last_request.parsed_url
+        # Get request body
+        request_body = last_request.body
+        # Get request headers
+        request_headers = last_request.headers
+        # Get query parameters
+        request_query_params = last_request.query
+        ...
+
+Here we used same Decorator for first and second page. So we needed to access the instance for them so we could inspect both requests.
