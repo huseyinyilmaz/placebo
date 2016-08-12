@@ -452,3 +452,56 @@ To get last_request from instance, first we need access to instance of Placebo w
         ...
 
 Here we used same Decorator for first and second page. So we needed to access the instance for them so we could inspect both requests.
+
+Mocking with regex url
+======================
+
+For some cases, we might want to mock a url using a regular expression.
+
+Unfortunately each backend has its own way of implementing regular expression and each implementation is uncompetible with the others. For that reason there is no generic way of describing regex urls. In placebo, we choose to delegate regex urls to backends. So each backends has its own version of regex implementation.
+
+Regex url in httmock backend
+----------------------------
+
+Httmock requires url attribute to have type of `urlparse.ParseResult` or `urlparse.SplitResult` to use backends. If url attribute is in String type of regex, mock will not work.
+
+.. code-block:: python
+
+   from six.moves.urllib import parse
+
+   class DynamicPlaceboForHttMock(Placebo):
+
+       url = parse.ParseResult(
+               scheme='http',
+               netloc=r'www\.acme\.com',
+               path=r'^/items/(\d+)/$',
+               params='',
+               query='',
+               fragment='')
+
+       ...
+
+In this placebo object we are we are mocking all urls with format `http://www.acme.com/items/<item_id>/`
+
+(See `tests/placebo_tests.py` file or `examples/` directory for different examples.)
+
+Regex url in httpretty backend
+------------------------------
+
+Httpretty backend, requires url attribute to have type of regex pattern. If regex url has type of `urlparse.ParseResult` or `urlparse.SplitResult`, regex will not work. Here is an example url for httpretty.
+
+.. code-block:: python
+
+   import re
+
+   class DynamicPlaceboForHttMock(Placebo):
+
+       url = re.compile('^http(s)?://www.acme.com/items/\d+/$')
+       ...
+
+(See `tests/placebo_tests.py` file or `examples/` directory for different examples.)
+
+Backends
+========
+
+TODO
