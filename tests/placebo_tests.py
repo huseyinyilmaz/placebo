@@ -23,6 +23,27 @@ class GetMock(utils.BasePlacebo):
                'custom-header2': 'Second header'}
 
 
+class GetDynamicMock(utils.BasePlacebo):
+
+    item = {'name': 'Huseyin', 'last_name': 'Yilmaz'}
+
+    def url(self):
+        return 'http://www.example.com/api/item'
+
+    def method(self):
+        return 'GET'
+
+    def status(self, request_url, request_headers, request_body):
+        return 200
+
+    def body(self, request_url, request_body, request_header):
+        return json.dumps({'name': 'Huseyin', 'last_name': 'Yilmaz'})
+
+    def headers(self, request_url, request_body, request_header):
+        return {'custom-header': 'OK',
+                'custom-header2': 'Second header'}
+
+
 class DecoratorTestCase(unittest.TestCase):
 
     def assertHeadersEqual(self, heads_a, heads_b):
@@ -173,6 +194,20 @@ class DecoratorTestCase(unittest.TestCase):
                              'huseyin')
         # Make sure that class's last_request is same as instances.
         self.assertIs(GetMock.last_request, mock.last_request)
+
+    @GetDynamicMock.decorate
+    def test_dynamic_valid_call(self):
+        response = requests.get(GetMock.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), GetMock.item)
+        self.assertHeadersEqual(response.headers, GetMock.headers)
+
+    @GetDynamicMock.decorate(status=500)
+    def test_dynamic_update_status(self):
+        response = requests.get(GetMock.url)
+        self.assertEqual(response.status_code, 500)
+        self.assertEqual(response.json(), GetMock.item)
+        self.assertHeadersEqual(response.headers, GetMock.headers)
 
 
 ###################################
