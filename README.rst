@@ -58,4 +58,4 @@ For more information, please refer to documentation_
 .. |build| image:: https://travis-ci.org/huseyinyilmaz/placebo.svg?branch=master
 .. _build: https://travis-ci.org/huseyinyilmaz/placebo
 
-.. _documentation: http://placebo.readthedocs.io/en/stable/
+.. _documentation: http://placebo.readthedocs.io/en/latest/

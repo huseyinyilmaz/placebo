@@ -166,6 +166,16 @@ Placebo can be installed using pip
 
 Or source code can be downloaded from github.
 
+In order to use placebo, you should also install backend of your choice. Currently there are httmock and httpretty backends. We recommend to use httmock if you are only using requests library. Otherwise use httpretty.
+
+.. code-block:: bash
+
+   $ pip install httmock
+
+   $ # or
+
+   $ pip search httpretty
+
 Usage
 =====
 
