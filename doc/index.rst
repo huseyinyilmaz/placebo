@@ -174,7 +174,7 @@ In order to use placebo, you should also install backend of your choice. Current
 
    $ # or
 
-   $ pip search httpretty
+   $ pip install httpretty
 
 Usage
 =====
