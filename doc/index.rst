@@ -9,7 +9,7 @@ Welcome to Placebo's documentation!
 Introduction
 ============
 
-Placebo is a tool for mocking external API's in python applications. It uses httmock or httpretty as mocking backend.
+Placebo is a tool for mocking external API's in python applications. It uses httmock or httpretty as mocking backend. Placebo provides an highliy compposible and reusable interface to those backends.
 
 
 Why this is useful

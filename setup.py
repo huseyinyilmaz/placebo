@@ -1,10 +1,20 @@
+"""setup for placebo.
+
+To update version:
+
+1) Update the version in this file.
+2) Update the version in documentation configuration.
+3) Goto readthedocs.com and make release doc public.
+4) Push a new release to pypi.
+"""
+
 import logging
 
 from setuptools import find_packages
 from setuptools import setup
 
 logging.basicConfig()
-VERSION = '0.0.1'
+VERSION = '1.0.0'
 DESCRIPTION = ('Placebo is a tool for mocking '
                'external API\'s in python applications.')
 
