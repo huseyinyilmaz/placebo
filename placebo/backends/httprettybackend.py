@@ -5,12 +5,6 @@ import httpretty
 
 logger = logging.getLogger(__name__)
 
-HEADER_WARNING = ('Placebo warning: Please beware that httppretty has known '
-                  'problems when you use multiple Placebo mocks that updates '
-                  'headers. If you have any problems with mixing headers, '
-                  'please consider chaning your backend to httmockbackend or '
-                  'do not stack such Placebo mocks on top of each other.')
-
 
 def get_decorator(placebo):
     """Create a decorator for placebo object."""
@@ -20,15 +14,13 @@ def get_decorator(placebo):
                 method = placebo._get_method()
 
                 def get_body(request, uri, _headers):
-
+                    # For some edge cases
                     request_headers = dict(request.headers)
                     # request_headers = headers
                     url = parse.urlparse(uri)
                     response_headers = placebo._get_headers(url,
                                                             request_headers,
                                                             request.body)
-                    if response_headers:
-                        logger.warn(HEADER_WARNING)
 
                     response_body = placebo._get_body(url,
                                                       request_headers,
