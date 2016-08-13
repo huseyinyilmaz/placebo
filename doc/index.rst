@@ -543,3 +543,19 @@ Backend is a function that accepts a placebo instance as an arguments and return
 
 From those methods _get_url and _get_method can be invoked on decorator initialization. But rest of the methods must be called for each request. There for they can only be invoked from inside the decorator. (See `placebo/backends/` directory for example implementations.)
 
+Caveats
+=======
+
+Separate url types for different backends
+-----------------------------------------
+Placebo interface mostly has a backend agnostic interface. You can switch from one backend to another and your mocks keep working as expected. Unfortunately, placebo interface is broken for regex urls. Each backend expects its regex urls in different type. In practice, this is usually not a problem since tests do not usually use regex mocks and switching backends is not a common practice. Also rewriting urls in different type is not really a hard task. Still, this behaviour is broken by design. So we will try to fix this in the future.
+
+Httppretty backend problems
+---------------------------
+httpretty monkey patches the sockets. Because of that implementation there are some caveats that httpretty brings.
+
+First problem happens when multiple mocks matches current request. It that case we want first applied mock to be choosen. Unfortunately, because of the way httpretty works, mock being choosen randomly. In different systems different mocks can be choosen. So as a solution, a project that must use httpretty instead of httmock must not apply intersecting mocks. This problem can only raise with heavy use of regex urls.
+
+Last httmock problem is sometimes pdb calls while httpretty is active, disables the mocks. This is not a common behavior. That happened to me couple times and I cannot reproduce it. So it is not a reason to use httpretty backend.
+
+
