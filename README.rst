@@ -15,7 +15,7 @@ To use placebo first we should create a placebo class for our mock. Placebo clas
        body = json.dumps([{'name': 'Huseyin',
                            'last_name': 'Yilmaz'}])
 
-Main interface for a placebo object is a decorator. Any function that decorated with a placebo class will be mocked with that placebo object.
+Main interface for a placebo object is a decorator. Any function that decorated with a placebo class will be mocked with that placebo class.
 
 ::
 
@@ -37,17 +37,17 @@ If your code is using multiple api endpoints you can easily stack placebo decora
 ::
 
    @AuthResponse.decorate
-   @Response.decorate
+   @UserResponse.decorate
    def test_valid_get_user(request):
        ...
 
    @AuthResponse.decorate(status=401)
-   @Response.decorate
+   @UserResponse.decorate
    def test_cannot_authenticate(request):
        ...
 
    @AuthResponse.decorate
-   @Response.decorate(status=503)
+   @UserResponse.decorate(status=503)
    def test_api_is_not_available(request):
        ...
 
