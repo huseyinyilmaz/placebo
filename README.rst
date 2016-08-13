@@ -4,33 +4,35 @@ Placebo |build|_
 Placebo is a utility that help mock api endpoints in a reusable and composable way.
 
 
-Sample mock:
+To use placebo first we should create a placebo class for our mock. Placebo class represents a response for certain request. If url and http method of any request matches with mock, response that is described in placebo class will be return. We can create a placebo mock like this:
 
 ::
 
-   class UsersResponse(BaseMock):
+   from placebo import Placebo
+
+   class UsersResponse(Placebo):
        url = 'http://www.acme.com/api/v1/users/'
        body = json.dumps([{'name': 'Huseyin',
                            'last_name': 'Yilmaz'}])
 
-And usage of the mock will be like this:
+Main interface for a placebo object is a decorator. Any function that decorated with a placebo class will be mocked with that placebo object.
 
 ::
 
-   @Response.decorate
+   @UserResponse.decorate
    def users_api_test(self):
        ...
 
 
-You can decorate any function or method with this decorator. Even django views:
+You can decorate any function or method with this decorator. Even django views! This makes development against external apis very easy.
 
 ::
 
-   @Response.decorate
+   @UserResponse.decorate
    def users_list_view(request):
        ...
 
-If your code is using multiple api endpoints you can easily stack responses on top of each other.
+If your code is using multiple api endpoints you can easily stack placebo decorators on top of each other.
 
 ::
 
