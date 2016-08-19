@@ -90,9 +90,9 @@ following:
            movie = get_movie('matrix', 1999)
            self.assertEqual(movie, None)
 
-This tests are fine. But they has two main disadvantages. First, code for mocking and actual function invocation is done in the same place which makes it hard to read. Second, if we keep writing similar tests we will probably copy the data for every test.
+These tests are fine. But they have two main disadvantages: First, code for mocking and actual function invocation is done in the same place which makes it hard to read. Second, if we keep writing similar tests we will probably copy the data for every test.
 
-Purpose of placebo is to separate data from the actual tests. So It would be a lot easier to reason about. Placebo mocks will also be reusable and composable.
+The purpose of placebo is to separate data from the actual tests. So It would be a lot easier to reason about. Placebo mocks will also be reusable and composable.
 
 Here is how same code could be implemented with placebo:
 
@@ -152,7 +152,7 @@ After having all the data in place, we can use our placebo to decorate our test 
 
 In first method, we directly used the placebo object. In the second method we changed the status of the object to 500 and tested the error case. Notice how logic for mocking the endpoint and test is seperated. We also reused same object for testing the valid response and error case.
 
-As a matter of fact, placebo object is not only usefull for testing. Since main interface is a decorator pattern,  you can use it on any function you want, like views in your web application. That way you can develop your applicarions against mock data or simulate error cases on your development environment very easily.
+As a matter of fact, Placebo object is not only useful for testing. Since main interface is a decorator pattern, you can use it on any function you want, like views in your web application. That way you can develop your applications against mock data or simulate error cases on your development environment very easily.
 
 
 Installation
@@ -166,7 +166,7 @@ Placebo can be installed using pip
 
 Or source code can be downloaded from github.
 
-In order to use placebo, you should also install backend of your choice. Currently there are httmock and httpretty backends. We recommend to use httmock if you are only using requests library. Otherwise use httpretty.
+In order to use placebo, you should also install a backend of your choice. Currently there are httmock and httpretty backends. We recommend to use httmock if you are only using requests library. Otherwise use httpretty.
 
 .. code-block:: bash
 
@@ -184,7 +184,7 @@ Implementation example
 
 (Detailed description will be in Implementing placebo classes section)
 
-Basic usage of placebo can be following
+Basic usage of placebo can be as follows:
 
 .. code-block:: python
 
@@ -255,20 +255,20 @@ A placebo class can have following properties.
 
 1) *url*:  Url that will be matched to decide if placebo mock is applied. It can be a string, urlparse.ParseResult or urlparse.SplitResult.
 
-2) *method*: HTTP method that will be matched to decide if placebo mock is applied. It should be a string like GET, POST, PUT, DELETE. Default value for method is GET.
+2) *method*: HTTP method that will be matched to decide whether placebo mock is applied. It should be a string like GET, POST, PUT, DELETE. Default value for method is GET.
 
-3) *body*: If mock object is applied body will be used as response body. It should be type of string.
+3) *body*: If mock object is applied body will be used as response body. It should be of type string.
 
 4) *status*: If mock object is applied status will be used as http status code of response. It should be an integer like 200, 404 or 500. Default value for status is 200.
 
-5) *headers*: If mock is applied headers will be used as http headers. type of headers should be a dictionary. (Keys should be header names and values should be header values.)
+5) *headers*: If mock is applied headers will be used as http headers. Type of headers should be dictionary. (Keys should be header names and values should be header values, both strings.)
 
-6) *backend*: Backends provides actual functionality of placebo. Currently there are two different backends are supported by default. httpretty and httmock. By default httmock is tried if it cannot be imported httpretty is tried. backend is basically a function that gets a placebo object as argument and mocks the current apis.
+6) *backend*: Backends provide actual functionality of placebo. Currently there are two different backends that are supported by default -- httpretty and httmock. By default httmock is tried. If it cannot be imported, httpretty is tried. Backend is basically a function that gets a placebo object as argument and mocks the current apis.
 
 Dynamic placebo classes
 -----------------------
 
-Previous pacebo class has static properties width already defined values. Most of the properties of placebo object can also be defined as methods therefore values can be calculated on the fly. Here is an example placebo objects that returns a mock response with id it receives. If id is not an integer, it returns 404 response. Even though those kind of placebo objects are not suitable for tests, they are very usefull for development.
+Previous pacebo class has static properties with already defined values. Most of the properties of placebo object can also be defined as methods therefore values can be calculated on the fly. Here is an example placebo objects that returns a mock response with id it receives. If id is not an integer, it returns 404 response. Even though those kind of placebo objects are not suitable for tests, they are very usefull for development.
 
 
 .. code-block:: python
