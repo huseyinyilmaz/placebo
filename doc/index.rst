@@ -315,25 +315,24 @@ Previous pacebo class has static properties with already defined values. Most of
                status = 404
            return status
 
-As seen in the example, almost all the properties of Placebo object can be written as methods. Some properties are evaluated for each request therefore receives url, headers, body. Rest of the properties are evaluated only once on initialization therefore does not receive any extra information about the request. Only property that cannot be implemented as method is backend. The reason for that is backend has a type of function so we cannot distinguish backends from methods that returns backends.
+As seen in the example, almost all the properties of the Placebo object can be written as methods. Some properties are evaluated for each request therefore ($FIXME$) receives url, headers, body. Rest of the properties are evaluated only once on initialization therefore does not receive any extra information about the request. Only property that cannot be implemented as method is ``backend``. The reason for that is ``backend`` is of type function so we cannot distinguish backends from methods that return backends.
 
 Placebo properties
 ------------------
 
-This section aims to describe each placebo properties in detail.
+This section aims to describe each placebo property in detail.
 
-- *url* : url is used to decide if current placebo needs to be applied on current request. This property is used only once in initialization time. It can have `str`, `unicode`, `urlparse.ParseResult` or `urlparse.SplitResult` type. str can also be implemented as a method and method should return one of the types listed above.
+- *url* : url is used to decide whether current placebo needs to be applied on current request. This property is used only once during initialization time. It can have ``str``, ``unicode``, ``urlparse.ParseResult`` or ``urlparse.SplitResult`` as type. ``str`` can also be set to a method that returns values of one of the types listed above.
 
-- *method*: method is also used to decide if current placebo needs to be applied on current request. It is used only once in initialization. It can have `str` or `unicode` types. It can have one of following values: 'GET', 'POST', 'PUT', 'DELETE',..etc.. alternatively, method can be implemented as a method that returns one of the values above.
+- *method*: method is also used to decide whether current placebo needs to be applied on current request. It is used only once during initialization. It can have ``str`` or ``unicode`` types. It can contain one of following values: 'GET', 'POST', 'PUT', 'DELETE',..etc.. Alternatively, ``method`` can be set to a function that returns one of the values above.
 
-- *status*: Status represents http status of response. If placebo is matched with current request, A mock response for that request will be created with status code of this attribute. This attribute needs to be type of `int` with values like 200, 203, 400, 404, 500, 503 etc. This attribute can also be implemented as a method. Since this attribute is used to create a response, method version of status will be getting 3 additional attribute that describes request. those arguments are request_url, request_header, request_body. (See examples about for usage example.)
+- *status*: Status represents http status of response. If placebo is matched with current request, a mock response for that request will be created with the status code of this attribute. This attribute needs to be of type ``int`` with values like 200, 203, 400, 404, 500, 503 etc. This attribute can also be set to a function. Since this attribute is used to create a response, this function will need to get 3 additional attributes that describes the request. Those arguments are request_url, request_header and request_body. (See examples about usage above.)
 
-- *body*: body attribute is used to create body of response. It should have type of `str` or `unicode`. It can also be implemented as a method. body method will be called for every request. So, method version gets request_url, request_header, request_body arguments.
+- *body*: This attribute is used to create the body of the response. It should be of type ``str` or ``unicode``. It can also be set to a function which will be called for every request. This function needs to accept request_url, request_header, request_body arguments.
 
-- *headers*: headers attribute is used as a header of response. It should be type of dict (keys are header names and values are header values.)
+- *headers*: This attribute is used to create the header of the response. It should be of type ``dict`` (keys are header names and values are header values, both strings)
 
-
-- *backend*: Backend property is a meta property instead of a filter or response property. It is a backend that Placebo object is used to create mock objects. Currently there are 2 backends. Those are backends.httpprettybackend.get_decorator` and `placebo.backends.httmockbackend.get_decorator`. backend attribute cannot be implemented as a method. Type of backend is a function. (function that gets a Placebo instance as argument and returns a decorator that applies that placebo object. More explanation can be found in Implementing backends section.) 
+- *backend*: This is a meta attribute instead of a filter or response attribute. It is the backend that ``Placebo`` object will use to create mock objects. Currently there are 2 backends: ``backends.httpprettybackend.get_decorator`` and ``placebo.backends.httmockbackend.get_decorator``. Unlike all the other attributes, ``backend`` attribute cannot be set to a function that returns backends, just to the backed itself, which is a function as well. It needs to get a Placebo instance as argument and return a decorator that applies that placebo object. More explanation can be found in the "Implementing backends" section.) 
 
 Using placebo classes as decorator
 ==================================
