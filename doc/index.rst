@@ -374,7 +374,7 @@ Placebo decorator can accept following arguments:
 Getting a placebo instance
 ==========================
 
-In placebo interface, Placebo class is used to decorate functions. When we decorate a function with a placebo class, an object for that class is instantiated an used to decorate current function. So each decorated function gets its own object to hold its mock information. Because object instantiation is handled by Placebo, there is no direct access to actual instance for each funciton. But for some edge cases,there is a need to access placebo objects. In those cases arg_name attribute of decorator can be used. If arg_name argument is specified current Placebo instance will be passed to decorated function as a keyword argument with given name. See `Accessing the last mocked request` section for usecase.
+In the placebo interface, Placebo class is used to decorate functions. When we decorate a function with a placebo class, an object for that class is instantiated and used to decorate current function. So each decorated function gets its own object to hold its mock information. Because object instantiation is handled by Placebo, there is no direct access to actual instance for each funciton. But for some edge cases,there is a need to access placebo objects. In those cases arg_name attribute of decorator can be used. If arg_name argument is specified current Placebo instance will be passed to decorated function as a keyword argument with given name. See "Accessing the last mocked request" section for a usecase.
 
 .. code-block:: python
 
@@ -385,7 +385,7 @@ In placebo interface, Placebo class is used to decorate functions. When we decor
 Accessing the last mocked request
 =================================
 
-Some times, we might want to access to last mocked request. There is 2 ways to do this. We can access last request that is located on class.
+Some times, we might want to access the last mocked request. There are 2 ways to do this: The easiest is to access last request from the class.
 
 .. code-block:: python
 
@@ -415,10 +415,11 @@ Some times, we might want to access to last mocked request. There is 2 ways to d
         request_query_params = last_request.query
         ...
 
-Accesing placebo object through class is really easy and does not require any change on rest of our code (`last_request = SimplePlacebo.last_request`). But there is a downside to this aproach. Since last_request here is a class attribute, it is shared by all instances. So, if get_items call fails to do a request, we can still have a last_request attribute on class becuase another test might be using same Placebo and already register a last request before our test is run.
-To solve this problem Placebo instances also have a last_request. That way you can access last_request only mocked by current instance.
+Accesing the placebo object through the class like this is really easy and does not require any change on rest of the code (`last_request = SimplePlacebo.last_request`). But there is a downside to this aproach: Since last_request here is a class attribute, it is shared by all instances. So, if get_items call fails to do a request, we can still have a last_request attribute on class becuase another test might be using same Placebo object and could already have registered a ``last_request`` before our test is run.
 
-To get last_request from instance, first we need access to instance of Placebo we want to use. Here is an example:
+To solve this problem, you can use the second way of getting the last mocked request -- By accessing the ``last_requet`` attribute of a Placebo instance. That way you can access the ``last_request`` that is only mocked by the current instance.
+
+To get ``last_request`` from an instance, first we need access the instance of Placebo we want to use. Here is an example:
 
 .. code-block:: python
 
@@ -460,19 +461,19 @@ To get last_request from instance, first we need access to instance of Placebo w
         request_query_params = last_request.query
         ...
 
-Here we used same Decorator for first and second page. So we needed to access the instance for them so we could inspect both requests.
+Here we used the same decorator for first and second pages. So we needed to access the relevant instance so we could inspect both requests.
 
 Mocking with regex url
 ======================
 
 For some cases, we might want to mock a url using a regular expression.
 
-Unfortunately each backend has its own way of implementing regular expression and each implementation is uncompetible with the others. For that reason there is no generic way of describing regex urls. In placebo, we choose to delegate regex urls to backends. So each backends has its own version of regex implementation.
+Unfortunately each backend has its own way of implementing regular expressions and implementations are incompatible with  others. For that reason there is no generic way of describing regex urls. In placebo, we choose to delegate regex urls to backends. So each backends has its own version of regex implementation.
 
 Regex url in httmock backend
 ----------------------------
 
-Httmock requires url attribute to have type of `urlparse.ParseResult` or `urlparse.SplitResult` to use backends. If url attribute is in String type of regex, mock will not work.
+Httmock requires url attribute to be of type ``urlparse.ParseResult`` or ``urlparse.SplitResult`` to use backends. If the ``url`` attribute is in string type of regex ($FIXME$), mock will not work.
 
 .. code-block:: python
 
@@ -490,14 +491,14 @@ Httmock requires url attribute to have type of `urlparse.ParseResult` or `urlpar
 
        ...
 
-In this placebo object we are we are mocking all urls with format `http://www.acme.com/items/<item_id>/`
+In this placebo object we are we are mocking all urls with format "http://www.acme.com/items/<item_id>/"
 
 (See `tests/placebo_tests.py` file or `examples/` directory for different examples.)
 
 Regex url in httpretty backend
 ------------------------------
 
-Httpretty backend, requires url attribute to have type of regex pattern. If regex url has type of `urlparse.ParseResult` or `urlparse.SplitResult`, regex will not work. Here is an example url for httpretty.
+Httpretty backend, requires url attribute to be of type regex pattern. If regex url is of type ``urlparse.ParseResult`` or ``urlparse.SplitResult``, regex will not work. Here is an example url for httpretty.
 
 .. code-block:: python
 
@@ -513,18 +514,18 @@ Httpretty backend, requires url attribute to have type of regex pattern. If rege
 Backends
 ========
 
-Placebo depends on other 3rd libraries for mocking functionality. Backends are integration points for placebo to use those libraries. For now placebo comes with 2 backends. Those are httmock backend and httpretty backend.
+Placebo depends on other 3rd party libraries for mocking functionality. Backends are integration points for placebo to use those libraries. For now placebo integrates with 2 backends: ``httmock`` and ``httpretty``.
 
-Because there are multiple backends, backend libraries are not in the list of requirements of placebo. At least one of them must be installed seperately before using placebo.
+Because there are multiple backends, backend libraries are not in placebo's requirements list. At least one of them must be installed explicitly before using placebo.
 
-By default, placebo tries to import httmock backend if it is not successfull (meaning httmock is not installed.). httpretty backend is used. If httpretty is not installed either initializatin will fail and placebo will raise an error.
+By default, placebo tries to import httmock backend if it is not successfull (meaning httmock is not installed.). httpretty backend is used. If httpretty is not installed either initialization will fail or placebo will raise an error.
 
-If both libraries are installed and we want to use different backend, backend attribute of placebo can be used to specified which backends to use.
+If both libraries are installed and we want to use a non-default backend, the backend attribute of the placebo object can be used to specify which backend to use.
 
 Implementing a custom backend
 -----------------------------
 
-Backend is a function that accepts a placebo instance as an arguments and returns a decorator. Placebo object has special methods for backends to consume placebo data. Those methods are:
+A backend is a function that accepts a placebo instance as an arguments and returns a decorator. Placebo object has special methods for backends to consume placebo data. Those methods are:
 
 .. code-block:: python
 
@@ -540,21 +541,21 @@ Backend is a function that accepts a placebo instance as an arguments and return
        def _get_headers(self, url, headers, body):
            ...
 
-From those methods _get_url and _get_method can be invoked on decorator initialization. But rest of the methods must be called for each request. There for they can only be invoked from inside the decorator. (See `placebo/backends/` directory for example implementations.)
+From those functions, _get_url and _get_method can be invoked on decorator initialization. But rest of the methods must be called for each request. Therefore, they can only be invoked from inside the decorator. (See `placebo/backends/` directory for example implementations.)
 
 Caveats
 =======
 
 Separate url types for different backends
 -----------------------------------------
-Placebo interface mostly has a backend agnostic interface. You can switch from one backend to another and your mocks keep working as expected. Unfortunately, placebo interface is broken for regex urls. Each backend expects its regex urls in different type. In practice, this is usually not a problem since tests do not usually use regex mocks and switching backends is not a common practice. Also rewriting urls in different type is not really a hard task. Still, this behaviour is broken by design. So we will try to fix this in the future.
+Placebo interface mostly has a backend agnostic interface. You can switch from one backend to another and your mocks should keep working as expected. Unfortunately, placebo interface is broken for regex urls. Each backend expects its urls regexes in different formats. In practice, this is usually not a problem since tests do not usually use regex mocks and switching backends is not a common practice. Also rewriting urls using different formats is not that hard to do. Still, this behaviour is broken by design. So we will try to fix this in the future.
 
 Httppretty backend problems
 ---------------------------
-httpretty monkey patches the sockets. Because of that implementation there are some caveats that httpretty brings.
+httpretty monkey patches the socket interface. Because of that implementation there are some caveats that httpretty brings.
 
-First problem happens when multiple mocks matches current request. It that case we want first applied mock to be choosen. Unfortunately, because of the way httpretty works, mock being choosen randomly. In different systems different mocks can be choosen. So as a solution, a project that must use httpretty instead of httmock must not apply intersecting mocks. This problem can only raise with heavy use of regex urls.
+First problem happens when multiple mocks match current request. It that case we want the first applied mock to be chosen. Unfortunately, because of the way httpretty works, mock is being chosen randomly. In different systems different mocks can be chosen. So as a solution, a project that must use httpretty instead of httmock must not apply intersecting mocks. This problem can only appear with heavy use of regex urls.
 
-Last httmock problem is sometimes pdb calls while httpretty is active, disables the mocks. This is not a common behavior. That happened to me couple times and I cannot reproduce it. So it is not a reason to use httpretty backend.
+Last httmock problem is sometimes when pdb is called while httpretty is active, it disables the mocks. This is not a common behavior. That happened to me couple times and I cannot reproduce it. So it is not a reason to use httpretty backend.
 
 
