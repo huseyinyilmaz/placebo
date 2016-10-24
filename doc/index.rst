@@ -328,7 +328,7 @@ This section aims to describe each placebo property in detail.
 
 - *status*: Status represents http status of response. If placebo is matched with current request, a mock response for that request will be created with the status code of this attribute. This attribute needs to be of type ``int`` with values like 200, 203, 400, 404, 500, 503 etc. This attribute can also be set to a callable. Since this attribute is used to create a response, this callable will need to get 3 additional attributes that describes the request. Those arguments are request_url, request_header and request_body. (See examples above.)
 
-- *body*: This attribute is used to create the body of the response. It should be of type ``str` or ``unicode``. It can also be set to a callable which will be called for every request. This callable needs to accept request_url, request_header, request_body arguments.
+- *body*: This attribute is used to create the body of the response. It should be of type ``str`` or ``unicode``. It can also be set to a callable which will be called for every request. This callable needs to accept request_url, request_header, request_body arguments.
 
 - *headers*: This attribute is used to create the header of the response. It should be of type ``dict`` (keys are header names and values are header values, both strings)
 
